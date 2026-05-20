@@ -20,7 +20,7 @@ try:
 except KeyError:
     st.warning("⚠️ تحذير سيبراني: لم يتم ضبط المفتاح السري 'STRIPE_SECRET_KEY' في إعدادات المنصة بعد.")
 
-# حقن ثيم الـ SaaS وحقن أيقونة ملء الشاشة العائمة الذكية (جافا سكريبت متطور)
+# حقن ثيم الـ SaaS وحقن أيقونة ملء الشاشة العائمة الذكية المتوافقة مع الموبايل والإطارات
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;600&family=Space+Grotesk:wght=500;700&family=Cairo:wght=400;700&display=swap');
@@ -33,31 +33,30 @@ st.markdown("""
     
     [data-testid="stToolbar"] {visibility: hidden;}
     
-    /* تصميم الزر العائم الاحترافي لملء الشاشة */
+    /* تصميم الأيقونة العائمة الاحترافية أسفل يسار الشاشة */
     .fullscreen-btn {
         position: fixed;
-        bottom: 20px;
-        left: 20px;
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, #00d2ff 0%, #7928ca 100%);
+        bottom: 25px;
+        left: 25px;
+        width: 55px;
+        height: 55px;
+        background: linear-gradient(135deg, #00ffcc 0%, #0077ff 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4);
+        box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
         cursor: pointer;
-        z-index: 999999;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        z-index: 9999999;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 2px solid rgba(255, 255, 255, 0.1);
     }
-    .fullscreen-btn:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 20px rgba(0, 210, 255, 0.6);
+    .fullscreen-btn:active {
+        transform: scale(0.9);
     }
     .fullscreen-btn svg {
-        width: 24px;
-        height: 24px;
+        width: 26px;
+        height: 26px;
         fill: #ffffff;
     }
     
@@ -127,31 +126,37 @@ st.markdown("""
     }
     </style>
 
-    <div class="fullscreen-btn" id="fs-toggle-btn" onclick="togglePlatformFullscreen()">
-        <svg viewBox="0 0 24 24" id="fs-icon">
+    <div class="fullscreen-btn" id="fs-btn" onclick="executeNativeFullscreen()">
+        <svg viewBox="0 0 24 24" id="fs-svg">
             <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
         </svg>
     </div>
 
     <script>
-    function togglePlatformFullscreen() {
-        // الوصول إلى عنصر الصفحة الرئيسي داخل إطار Streamlit
-        var doc = window.parent.document.documentElement;
-        var fsButton = document.getElementById('fs-toggle-btn');
-        var fsIcon = document.getElementById('fs-icon');
+    function executeNativeFullscreen() {
+        // كسر حظر حماية الإطارات واستدعاء الشاشة الكاملة من أعلى مستوى للمتصفح لضمان استجابة الموبايل الفورية
+        var topDoc = window.top.document.documentElement;
+        var topDocRef = window.top.document;
+        var svgIcon = document.getElementById('fs-svg');
 
-        if (!window.parent.document.fullscreenElement) {
-            doc.requestFullscreen().then(() => {
-                // تغيير شكل الأيقونة إلى وضع الخروج عند التفعيل الناجح
-                fsIcon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
-            }).catch(err => {
-                console.log("Fullscreen Error: " + err.message);
-            });
+        if (!topDocRef.fullscreenElement && !topDocRef.webkitFullscreenElement && !topDocRef.mozFullScreenElement) {
+            // تفعيل ملء الشاشة مع دعم كافة المتصفحات (Chrome, Safari, Firefox)
+            var requestMethod = topDoc.requestFullscreen || topDoc.webkitRequestFullscreen || topDoc.mozRequestFullScreen || topDoc.msRequestFullscreen;
+            if (requestMethod) {
+                requestMethod.call(topDoc).then(() => {
+                    svgIcon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
+                }).catch(err => {
+                    console.log("Error: " + err.message);
+                });
+            }
         } else {
-            window.parent.document.exitFullscreen().then(() => {
-                // إعادة الأيقونة لوضع ملء الشاشة العادي عند الخروج
-                fsIcon.innerHTML = '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
-            });
+            // الخروج الفوري عند الضغط مرة أخرى
+            var exitMethod = topDocRef.exitFullscreen || topDocRef.webkitExitFullscreen || topDocRef.mozCancelFullScreen || topDocRef.msExitFullscreen;
+            if (exitMethod) {
+                exitMethod.call(topDocRef).then(() => {
+                    svgIcon.innerHTML = '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
+                });
+            }
         }
     }
     </script>
@@ -266,4 +271,3 @@ with col2:
                 st.error(f"❌ حدث خطأ أثناء الاتصال ببوابة Stripe: {e}")
         else:
             st.success("🌟 باقتك نشطة بالفعل! يمكنك الذهاب مباشرة لصفحة الأدوات والمعاملات.")
-
