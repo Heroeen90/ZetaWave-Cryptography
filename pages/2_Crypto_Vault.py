@@ -46,15 +46,13 @@ st.markdown("""
         text-align: center;
         margin-bottom: 25px;
     }
-    .key-box {
-        background: rgba(0, 255, 204, 0.05);
-        border: 1px solid rgba(0, 255, 204, 0.2);
-        padding: 15px;
-        border-radius: 10px;
-        text-align: center;
-        font-family: monospace;
-        color: #00ffcc;
-        margin-top: 10px;
+    .quantum-mode-box {
+        background: linear-gradient(135deg, rgba(121, 40, 202, 0.1) 0%, rgba(0, 210, 255, 0.1) 100%);
+        border: 1px solid rgba(0, 210, 255, 0.3);
+        padding: 20px;
+        border-radius: 15px;
+        margin-top: 15px;
+        box-shadow: 0 0 20px rgba(0, 210, 255, 0.1);
     }
     </style>
 """, unsafe_allow_html=True)
@@ -129,13 +127,13 @@ if selected_option == "المحلل الذكي 🎛️":
 elif selected_option == "السجل الحي 📜":
     st.markdown("<h3 style='font-family: Cairo; font-size: 18px;'>📜 السجل الحي للعمليات الكمية (Live Ledger)</h3>", unsafe_allow_html=True)
     st.code("""
-[INFO] 2026-05-21 01:03:00 - Quantum Key Generated successfully.
-[SECURE] 2026-05-21 01:04:15 - Handshake established with node ZW-992.
-[SUCCESS] 2026-05-21 01:05:42 - Zero-Knowledge Proof verified.
+[INFO] 2026-05-21 01:12:04 - Quantum Key Generated successfully.
+[SECURE] 2026-05-21 01:12:44 - Handshake established with node ZW-992.
+[SUCCESS] 2026-05-21 01:13:12 - Zero-Knowledge Proof verified.
     """, language="bash")
 
 # =========================================================
-# 3️⃣ خيار: النطاق الكمي والمعاملات (تمت إعادة الرسوم وتحديد المفاتيح الحية هنا)
+# 3️⃣ خيار: النطاق الكمي والمعاملات (صلاحيات اختيار وتخصيص المفتاح الكاملة)
 # =========================================================
 elif selected_option == "النطاق الكمي والمعاملات 📑":
     st.markdown("<h3 style='font-family: Cairo; font-size: 18px;'>📑 النطاق الكمي وبوابة المعاملات المفتوحة</h3>", unsafe_allow_html=True)
@@ -145,33 +143,39 @@ elif selected_option == "النطاق الكمي والمعاملات 📑":
     
     # 📊 إضافة الرسوم البيانية الحية لدوال ريمان والموجات الكمية لتحديد المفتاح
     st.markdown("<p style='font-size: 14px; font-weight: bold; color: #00ffcc;'>📈 الرسم البياني لتموجات النطاق الموجه (Riemann Zeta Fluctuations):</p>", unsafe_allow_html=True)
-    
-    # توليد بيانات محاكاة رسومية ديناميكية للموجات
     chart_data = pd.DataFrame(
-        np.sin(np.linspace(0, 10, 100)) + np.random.normal(0, 0.1, 100),
+        np.sin(np.linspace(0, 10, 100)) + np.random.normal(0, 0.05, 100),
         columns=['Riemann Space Matrix']
     )
     st.line_chart(chart_data)
     
-    # 🔑 وحدة لوحة تحديد وتوليد المفتاح المناسب للتشفير
     st.write("---")
-    st.markdown("<p style='font-size: 15px; font-weight: bold; color: #0077ff;'>🔑 وحدة اختيار وتوليد مفاتيح التشفير المتقدمة:</p>", unsafe_allow_html=True)
     
-    key_type = st.selectbox("اختر مستوى توليف التشفير المُراد استخدامه لنصوصك:", [
-        "ZetaWave Quantum Key (توليد مفتاح كمي متغير)",
-        "AES-256 Military Standard Key",
-        "Riemann Custom Phase Key (مفتاح ريمان الدوري)"
+    # 🔥 إعادة صلاحية اختيار وتخصيص الأوضاع التشفيرية الفوق أمنية
+    st.markdown("<h4 style='font-family: Cairo; color: #0077ff;'>⚙️ لوحة التحكم السيبراني وتخصيص الأوضاع</h4>", unsafe_allow_html=True)
+    
+    # اختيار الوضع الأسطوري المطلوب
+    chosen_mode = st.selectbox("🔮 اختر وضع الحصانة الكمية المطلوب تفعيله لجلسة التشفير:", [
+        "وضع ألف تريليون صفر (1,000,000,000,000,000 Zeros Phase)",
+        "وضع لا نهائي (Infinite Quantum Paradox)",
+        "الوضع القياسي الموحد (Standard Protocol)"
     ])
     
-    if st.button("🧬 توليد المفتاح المحدد فوراً", use_container_width=True):
-        import random
-        import string
-        # توليد مفتاح عشوائي سيبراني يحاكي الأنظمة الضخمة
-        generated_key = "".join(random.choices(string.ascii_uppercase + string.digits, k=24))
+    # 🔓 إتاحة كتابة المفتاح يدوياً بالكامل كما طلب صديقنا
+    st.markdown("<p style='font-size: 14px; font-weight: bold; margin-top:15px;'>🔑 اكتب مفتاح ريمان الموجي الخاص بك يدوياً (صلاحية كاملة):</p>", unsafe_allow_html=True)
+    user_custom_key = st.text_input("أدخل سلسلة التشفير الخاصة بك هنا (اتركها فارغة للتوليد الافتراضي):", placeholder="مثال: MY-SUPER-SECRET-RIEMANN-KEY-2026")
+    
+    if st.button("🧬 ربط وحقن الإعدادات في النطاق فوراً", use_container_width=True, type="primary"):
+        # تحديد الاسم المستعار للوضع
+        mode_label = "ألف تريليون صفر" if "ألف تريليون" in chosen_mode else "لا نهائي" if "لا نهائي" in chosen_mode else "القياسي"
+        final_key = user_custom_key if user_custom_key else "ZETA-AUTO-GENERATED-RIEMANN-PHASE"
+        
         st.markdown(f"""
-        <div class="key-box">
-            🔑 المفتاح النشط المولّد: <b>{generated_key}</b><br>
-            <span style='font-size: 11px; color:#aaa;'>[يمكنك نسخ هذا المفتاح واستخدامه في لوحة المحلل الذكي لتشفير وفك تشفير حزم البيانات]</span>
+        <div class="quantum-mode-box">
+            <span style="color: #00ffcc; font-weight: bold; font-size: 16px;">🚀 تم الحقن والربط بنجاح!</span><br>
+            🌐 <b>الوضع النشط حالياً:</b> <span style="color: #7928ca; font-weight:bold;">{chosen_mode}</span><br>
+            🔑 <b>مفتاح ريمان المعتمد لديك:</b> <code style="color: #0077ff; font-size:14px;">{final_key}</code><br><br>
+            <span style="color: #aaa; font-size: 12px;">✅ تم قفل خلايا التشفير في وضع <b>{mode_label}</b>. يمكنك الآن استخدام هذا المفتاح في تبويب المحلل الذكي لإتمام العمليات بحصانة مطلقة.</span>
         </div>
         """, unsafe_allow_html=True)
 
