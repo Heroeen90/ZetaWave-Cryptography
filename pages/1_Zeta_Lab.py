@@ -56,8 +56,9 @@ fig.update_layout(
     paper_bgcolor='#0e1117',
 )
 
-# عرض الرسم التفاعلي في التطبيق
-st.plotly_chart(fig, use_container_width=True)
+# عرض الرسم التفاعلي في التطبيق مع إخفاء أزرار التحكم لمنع التداخل البصري
+st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+
 
 # 3. استخراج وحفظ المفتاح المشترك في الذاكرة السحابية للجلسة
 # نأخذ مقطعاً من المصفوفة لتوليد الـ Bits الثابتة للمفتاح
