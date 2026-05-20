@@ -1,6 +1,5 @@
 import streamlit as st
 import stripe
-import time
 
 # إعدادات الصفحة الرئيسية
 st.set_page_config(
@@ -13,14 +12,14 @@ st.set_page_config(
 STRIPE_PUBLIC_KEY = "pk_test_51TZEozGVNwmCi5l2MezBS5P14YRe8Dc6uUIx8qW9mlxTrVpkOme9RbhQHnpzDymQ9ZMQZTN8oylDyJDyQoKPijIV00oT2DyBkC"
 PRICE_ID = "price_1TZFBTGVNwmCi5l2y0elL0F"
 
-# 🔒 استدعاء المفتاح السري بأمان من خزنة Streamlit Secrets الحامية
+# 🔒 استدعاء المفتاح السري بأمان من خزنة Streamlit Secrets
 try:
     STRIPE_SECRET_KEY = st.secrets["STRIPE_SECRET_KEY"]
     stripe.api_key = STRIPE_SECRET_KEY
 except KeyError:
     st.warning("⚠️ تحذير سيبراني: لم يتم ضبط المفتاح السري 'STRIPE_SECRET_KEY' في إعدادات المنصة بعد.")
 
-# حقن ثيم الـ SaaS وحقن أيقونة ملء الشاشة العائمة الذكية المتوافقة مع الموبايل والإطارات
+# حقن ثيم الـ SaaS الاحترافي المتوافق مع الموبايل
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;600&family=Space+Grotesk:wght=500;700&family=Cairo:wght=400;700&display=swap');
@@ -32,33 +31,6 @@ st.markdown("""
     }
     
     [data-testid="stToolbar"] {visibility: hidden;}
-    
-    /* تصميم الأيقونة العائمة الاحترافية أسفل يسار الشاشة */
-    .fullscreen-btn {
-        position: fixed;
-        bottom: 25px;
-        left: 25px;
-        width: 55px;
-        height: 55px;
-        background: linear-gradient(135deg, #00ffcc 0%, #0077ff 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
-        cursor: pointer;
-        z-index: 9999999;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border: 2px solid rgba(255, 255, 255, 0.1);
-    }
-    .fullscreen-btn:active {
-        transform: scale(0.9);
-    }
-    .fullscreen-btn svg {
-        width: 26px;
-        height: 26px;
-        fill: #ffffff;
-    }
     
     .main-hero {
         text-align: center;
@@ -125,48 +97,29 @@ st.markdown("""
         margin-bottom: 20px;
     }
     </style>
-
-    <div class="fullscreen-btn" id="fs-btn" onclick="executeNativeFullscreen()">
-        <svg viewBox="0 0 24 24" id="fs-svg">
-            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
-        </svg>
-    </div>
-
-    <script>
-    function executeNativeFullscreen() {
-        // كسر حظر حماية الإطارات واستدعاء الشاشة الكاملة من أعلى مستوى للمتصفح لضمان استجابة الموبايل الفورية
-        var topDoc = window.top.document.documentElement;
-        var topDocRef = window.top.document;
-        var svgIcon = document.getElementById('fs-svg');
-
-        if (!topDocRef.fullscreenElement && !topDocRef.webkitFullscreenElement && !topDocRef.mozFullScreenElement) {
-            // تفعيل ملء الشاشة مع دعم كافة المتصفحات (Chrome, Safari, Firefox)
-            var requestMethod = topDoc.requestFullscreen || topDoc.webkitRequestFullscreen || topDoc.mozRequestFullScreen || topDoc.msRequestFullscreen;
-            if (requestMethod) {
-                requestMethod.call(topDoc).then(() => {
-                    svgIcon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
-                }).catch(err => {
-                    console.log("Error: " + err.message);
-                });
-            }
-        } else {
-            // الخروج الفوري عند الضغط مرة أخرى
-            var exitMethod = topDocRef.exitFullscreen || topDocRef.webkitExitFullscreen || topDocRef.mozCancelFullScreen || topDocRef.msExitFullscreen;
-            if (exitMethod) {
-                exitMethod.call(topDocRef).then(() => {
-                    svgIcon.innerHTML = '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
-                });
-            }
-        }
-    }
-    </script>
 """, unsafe_allow_html=True)
+
+# 🖥️ إضافة زر الـ Fullscreen الرسمي المستقر في الأعلى برموز واضحة
+if st.button("🖥️ تفعيل / إلغاء وضع ملء الشاشة الكاملة (Fullscreen)", use_container_width=True):
+    js_code = """
+    <script>
+        var doc = window.parent.document.documentElement;
+        if (!window.parent.document.fullscreenElement) {
+            doc.requestFullscreen().catch(err => { console.log(err.message); });
+        } else {
+            window.parent.document.exitFullscreen();
+        }
+    </script>
+    """
+    st.components.v1.html(js_code, height=0, width=0)
+
+st.write("---")
 
 # إدارة تهيئة الجلسة للمالك والمحاكاة
 if 'is_pro' not in st.session_state:
     st.session_state['is_pro'] = True 
 
-# التقاط ما إذا كان العميل عائداً بعد الدفع الناجح عبر الروابط (Success URL)
+# التقاط الدفع الناجح
 query_params = st.query_params
 if "session_id" in query_params:
     st.session_state['is_pro'] = True
@@ -266,8 +219,6 @@ with col2:
                         cancel_url="https://ccu.streamlit.app/",
                     )
                     st.markdown(f'<meta http-equiv="refresh" content="0; url={checkout_session.url}">', unsafe_allow_html=True)
-                    st.write(f"🔗 إذا لم يتم تحويلك تلقائياً، [اضغط هنا للدفع]({checkout_session.url})")
             except Exception as e:
                 st.error(f"❌ حدث خطأ أثناء الاتصال ببوابة Stripe: {e}")
-        else:
-            st.success("🌟 باقتك نشطة بالفعل! يمكنك الذهاب مباشرة لصفحة الأدوات والمعاملات.")
+
