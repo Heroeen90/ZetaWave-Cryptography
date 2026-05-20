@@ -187,7 +187,8 @@ st.markdown("""
 st.caption(f"🔒 بصمة موجة ريمان الحالية النشطة عالمياً: `{st.session_state['master_key']}`")
 
 # 4. بناء الـ Tabs بنمط الـ SaaS الفاخر
-tab1, tab2, tab3 = st.tabs(["🔒 تشفير وحماية البيانات", "🔓 استرجاع وفك التشفير", "📜 سجل العمليات الحي"])
+tab1, tab2, tab3, tab4 = st.tabs(["🔒 تشفير وحماية البيانات", "🔓 استرجاع وفك التشفير", "📜 سجل العمليات الحي", "🎛️ محلل الشفرات الذكي"])
+
 
 # دالة التشفير العسكري
 def aes_encrypt(data: bytes, key_str: str) -> bytes:
@@ -335,4 +336,77 @@ with tab3:
             st.code(log, language="text")
     else:
         st.caption("🪐 السجل فارغ حالياً. قم بعمليات تشفير أو فك تشفير لتظهر التحليلات الحية هنا.")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# --- التبويب الرابع: محلل الشفرات الذكي (Cryptanalysis) ---
+with tab4:
+    st.markdown("<div class='saas-card'>", unsafe_allow_html=True)
+    st.write("### 🎛️ نظام التحليل الجنائي للمخرجات المشفرة")
+    st.write("قم بلصق أي نص مشفر هنا ليقوم النظام بتحليل تركيبته الرياضية، التنبؤ بنوعه، وقياس مستوى عشوائيته (Entropy):")
+    
+    analysis_input = st.text_area("أدخل النص المشفر المراد فحصه:", key="analysis_text_input", placeholder="ضع النص هنا ليتم فحصه سيبرانياً...")
+    
+    if st.button("🔍 بدء الفحص والتحليل الجنائي", use_container_width=True):
+        if analysis_input:
+            text_pure = analysis_input.strip()
+            length = len(text_pure)
+            
+            # 1. حساب العشوائية (Entropy Calculation)
+            import math
+            from collections import Counter
+            
+            prob_dict = [float(c) / length for c in Counter(text_pure).values()]
+            entropy = - sum(p * math.log(p, 2) for p in prob_dict)
+            
+            # 2. خوارزمية التنبؤ بالنوع بناءً على البنية الهيكلية
+            predicted_type = "غير معروف (بيانات عشوائية مبهمة)"
+            strength_status = "ضعيف أو متوسط"
+            glow_color = "#ff3333" # أحمر كتحذير افتراضي
+            
+            # التحقق من نوع الهاشات الشهيرة
+            if length == 32 and all(c in "0123456789ABCDEFabcdef" for c in text_pure):
+                predicted_type = "بصمة رقمية من نوع MD5 Hash"
+                strength_status = "ضعيف (مرفوض معيارياً لسهولة الكسر)"
+            elif length == 64 and all(c in "0123456789ABCDEFabcdef" for c in text_pure):
+                predicted_type = "تشفير أحادي الاتجاه SHA-256"
+                strength_status = "آمن جداً (معيار عالمي للتحقق)"
+            # التحقق من الـ HEX التابع لتطبيقنا أو خوارزميات AES
+            elif all(c in "0123456789ABCDEFabcdef \n" for c in text_pure) and length > 40:
+                predicted_type = "تشفير كتلي متناظر (AES-GCM / HEX Stream)"
+                strength_status = "حصانة عسكرية (مقاوم للاختراق الكمي)"
+                glow_color = "#00d2ff"
+            # التحقق من Base64
+            elif (length % 4 == 0) and all(c in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=" for c in text_pure):
+                predicted_type = "نص مرمز بصيغة Base64 Encoding"
+                strength_status = "ترميز فقط (لا يعتبر حماية حقيقية بدون مفتاح)"
+                
+            if entropy > 4.5 and predicted_type == "غير معروف (بيانات عشوائية مبهمة)":
+                predicted_type = "تشفير تدفقي معقد (أرجحية تشفير كلاسيكي عالي العشوائية)"
+                strength_status = "قوي جداً هندسياً"
+                glow_color = "#7928ca"
+
+            # عرض النتائج في لوحة زجاجية ساحرة ومطابقة للهوية البصرية لمشروعك
+            st.markdown(f"""
+            <div class="analytics-panel" style="border-color: {glow_color};">
+                <div class="panel-title" style="color: {glow_color}; text-shadow: 0 0 10px {glow_color};">📊 نتائج الفحص الهيكلي والتحليل</div>
+                <div class="grid-container">
+                    <div class="grid-box">
+                        <div class="box-lbl">النوع المتوقع (Prediction)</div>
+                        <div class="box-val" style="font-size: 14px; color: #fff;">{predicted_type}</div>
+                    </div>
+                    <div class="grid-box">
+                        <div class="box-lbl">معدل العشوائية (Entropy)</div>
+                        <div class="box-val" style="color: {glow_color}; font-size: 22px;">{entropy:.2f} / 8.00</div>
+                    </div>
+                    <div class="grid-box">
+                        <div class="box-lbl">تقييم الأمان الأولي</div>
+                        <div class="box-val" style="font-size: 13px; color: #fff;">{strength_status}</div>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.session_state['logs'].append(f"🔍 {time.strftime('%H:%M:%S')} - تم تشغيل فحص جنائي لنص بطول {length} حرف.")
+        else:
+            st.error("⚠️ الرجاء إدخال نص مشفر لكي يتمكن السيرفر من تحليله.")
     st.markdown("</div>", unsafe_allow_html=True)
