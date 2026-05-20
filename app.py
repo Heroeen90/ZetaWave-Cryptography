@@ -20,7 +20,7 @@ st.markdown("""
     }
     
     [data-testid="stToolbar"] {visibility: hidden;}
-    [data-testid="stSidebar"] {display: none !important;} /* إلغاء السايدبار تماماً لمنع المشاكل */
+    [data-testid="stSidebar"] {display: none !important;}
     
     .main-hero {
         text-align: center;
@@ -97,33 +97,34 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# إدارة تهيئة الجلسة لحالة الـ Pro
+# 🛠️ الإصلاح الجوهري: إدارة تهيئة الجلسة للمالك دون التسبب في تعليق الأزرار
 if 'is_pro' not in st.session_state:
-    st.session_state['is_pro'] = True  # تفعيل حتمي وتلقائي لك بصفتك المالك
+    st.session_state['is_pro'] = True  # القيمة الافتراضية لك هي تفعيل ميزات الـ Pro دائماً كمالك للمنصة
 
-# تفعيل حالة المالك تلقائياً
-is_owner = True 
-
-# عرض لوحة التحكم الفورية بالحساب في أعلى الصفحة الرئيسية
+# عرض لوحة التحكم الفورية بالحساب
 st.markdown("<h3 style='font-family: Cairo; text-align: center; font-size: 20px;'>💼 بوابة التحكم بالحساب الرقمي</h3>", unsafe_allow_html=True)
 
-if is_owner:
+# التحقق من الحالة الحالية وعرض التنبيه المناسب
+if st.session_state['is_pro']:
     st.markdown("""
     <div class="owner-box">
-        <span style="color: #00d2ff; font-weight: bold; font-family: Cairo; font-size: 15px;">👑 نظام التعرف الذكي: مرحباً بك يا مطور المنصة (الوصول المطلق نشط)</span>
+        <span style="color: #00d2ff; font-weight: bold; font-family: Cairo; font-size: 15px;">👑 وضع المالك النشط: حساب الـ Pro مفتوح بالكامل تلقائياً</span>
     </div>
     """, unsafe_allow_html=True)
     
-    # نتيح لك زر تجريبي اختياري لرؤية كيف سيبدو الموقع للعميل العادي إذا تحول للباقة المجانية
-    col_test1, col_test2 = st.columns(2)
-    with col_test1:
-        if st.button("🔄 محاكاة حساب عميل مجاني (محدود)", use_container_width=True):
-            st.session_state['is_pro'] = False
-            st.rerun()
-    with col_test2:
-        if st.button("⚡ تفعيل وضع المالك الاحترافي (Pro)", use_container_width=True):
-            st.session_state['is_pro'] = True
-            st.rerun()
+    if st.button("🔄 محاكاة حساب عميل مجاني (لاختبار القيود)", use_container_width=True):
+        st.session_state['is_pro'] = False
+        st.rerun()
+else:
+    st.markdown("""
+    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 16px; text-align: center; margin-bottom: 20px;">
+        <span style="color: #888; font-family: Cairo; font-size: 14px;">👤 وضع المحاكاة: أنت تتصفح الآن كـ (عميل مجاني محدود)</span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    if st.button("⚡ العودة لوضع المالك الاحترافي المستمر (Pro)", use_container_width=True):
+        st.session_state['is_pro'] = True
+        st.rerun()
 
 st.write("---")
 
@@ -136,7 +137,6 @@ st.markdown("""
 <h2 style='text-align: center; font-family: Cairo; margin-bottom: 20px; font-size: 22px;'>🏷️ خطط الاشتراك السحابية الحالية</h2>
 """, unsafe_allow_html=True)
 
-# بناء شبكة الأسعار التفاعلية بأزرار حقيقية
 col1, col2 = st.columns(2)
 
 with col1:
@@ -144,7 +144,7 @@ with col1:
     <div class="price-card">
         <h3 style='color: #fff; font-family: Cairo; font-size: 16px;'>الباقة الأساسية (Free)</h3>
         <div class="price-val">$0 <span>/ شهرياً</span></div>
-        <p style='color: #888; font-size: 13px; margin-bottom: 10px;'>تناسب الأفراد لتجربة التشفير البسيط</p>
+        <p style='color: #888; font-size: 13px; margin-bottom: 10px;'>تناسب الأفراد لتجرفة التشفير البسيط</p>
         <hr style='border-color: rgba(255,255,255,0.05); margin-bottom: 10px;'>
         <ul style='text-align: right; color: #bbb; font-size: 12px; font-family: Cairo; direction: rtl; padding-right: 15px; min-height: 100px;'>
             <li>✓ تشفير وفك تشفير النصوص السريّة</li>
@@ -154,11 +154,6 @@ with col1:
         </ul>
     </div>
     """, unsafe_allow_html=True)
-    if st.button("التحويل للمجاني لاختبار الجدار الأمني", use_container_width=True):
-        st.session_state['is_pro'] = False
-        st.toast("تم التبديل للوضع المحدود بنجاح.")
-        time.sleep(0.3)
-        st.rerun()
 
 with col2:
     st.markdown("""
@@ -170,15 +165,10 @@ with col2:
         <hr style='border-color: rgba(0, 210, 255, 0.2); margin-bottom: 10px;'>
         <ul style='text-align: right; color: #bbb; font-size: 12px; font-family: Cairo; direction: rtl; padding-right: 15px; min-height: 100px;'>
             <li>✓ كل ميزات الباقة المجانية بالكامل</li>
-            <li>✓ تشفير مفتوح للملفات بجميع الأحجام</li>
+            <li>✓ تشفير مفتوح للمللفات بجميع الأحجام</li>
             <li>✓ الوصول الكامل لمحلل الشفرات الجنائي</li>
             <li>✓ وضع اللانهاية الكمي الفوق-أمن</li>
         </ul>
     </div>
     """, unsafe_allow_html=True)
-    if st.button("🚀 تفعيل باقة الـ Pro المدفوعة فوراً", use_container_width=True, type="primary"):
-        st.session_state['is_pro'] = True
-        st.toast("🎉 تم تفعيل الوضع الاحترافي والميزات الفوق أمنية!")
-        time.sleep(0.3)
-        st.rerun()
 
