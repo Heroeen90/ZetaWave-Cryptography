@@ -1,11 +1,11 @@
 import streamlit as st
 import numpy as np
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 import hashlib
 
-st.set_page_config(page_title="Zeta Wave Lab", page_icon="🌌", layout="centered")
+st.set_page_config(page_title="Zeta Wave Lab 3D", page_icon="🌌", layout="centered")
 
-st.markdown("<h1>🌌 مختبر أمواج ريمان الحسابي</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: #00ffcc;'>🌌 مختبر أمواج ريمان ثلاثي الأبعاد (3D)</h1>", unsafe_allow_html=True)
 st.write("---")
 
 mode = st.radio("🚀 اختر نطاق المحاكاة الرياضية لأصفار ريمان:", ["النطاق المتقدم (10 - 1000 تريليون صفر)", "النطاق اللامتناهي (Quantum Infinity Mode ♾️)"])
@@ -19,9 +19,12 @@ else:
 
 seed_factor = st.number_input("🔑 عامل التغيير الديناميكي (Seed Factor):", min_value=1, max_value=999999, value=77777)
 
-# الحسابات الرياضية
-x = np.linspace(1, 50, 500)
-wave_sum = np.zeros_like(x, dtype=float)
+# 1. الحسابات الرياضية المتقدمة لإنشاء مصفوفة تداخل ثلاثية الأبعاد (3D Space)
+x = np.linspace(1, 30, 200)
+y = np.linspace(1, 10, 50)  # المحور الثالث يمثل البُعد الزمني/الترددي للتداخل
+X, Y = np.meshgrid(x, y)
+Z = np.zeros_like(X, dtype=float)
+
 base_zeros = [14.1347, 21.0220, 25.0108, 30.4248, 32.9350]
 
 for i, gamma in enumerate(base_zeros):
@@ -29,23 +32,39 @@ for i, gamma in enumerate(base_zeros):
         virtual_gamma = gamma * np.pi * (seed_factor * 0.01)
     else:
         virtual_gamma = gamma * (density_factor / 10**12) + (seed_factor * 0.05)
-    wave_sum += np.sin(virtual_gamma * np.log(x + 1e-10)) / (i + 1)
+    
+    # توليد تداخل موجي على مساحة ثنائية الأبعاد لتعطي عمقاً مجسماً (3D Surface)
+    Z += (np.sin(virtual_gamma * np.log(X + 1e-10)) * np.cos(Y * 0.5)) / (i + 1)
 
-# الرسم البياني
-fig, ax = plt.subplots(figsize=(7, 3.5))
-fig.patch.set_facecolor('#0e1117')
-ax.set_facecolor('#161b22')
-ax.plot(x, wave_sum, color='#00ffcc', lw=2)
-ax.tick_params(colors='#ffffff')
-ax.grid(True, color='#30363d', alpha=0.4)
-st.pyplot(fig)
+# 2. بناء مجسم الرسم البياني ثلاثي الأبعاد التفاعلي باستخدام Plotly
+fig = go.Figure(data=[go.Surface(
+    z=Z, x=X, y=Y,
+    colorscale='Viridis',  # تدرج لوني مستقبلي احترافي (أزرق - أخضر - أصفر)
+    colorbar=dict(title='كثافة الموجة')
+)])
 
-# استخراج المفتاح وحفظه في الذاكرة المؤقتة (Session State) لكي تراه الصفحات الأخرى
-raw_bits = "".join(["1" if val > 0 else "0" for val in wave_sum[:64]])
+fig.update_layout(
+    title='بصمة التداخل الموجي ثلاثية الأبعاد لطيف ريمان الكمي',
+    autosize=True,
+    scene=dict(
+        xaxis=dict(title='نطاق الدالة (X)', backgroundcolor="rgb(14, 17, 23)", gridcolor="gray", showbackground=True),
+        yaxis=dict(title='البُعد الترددي (Y)', backgroundcolor="rgb(14, 17, 23)", gridcolor="gray", showbackground=True),
+        zaxis=dict(title='سعة التشفير (Z)', backgroundcolor="rgb(14, 17, 23)", gridcolor="gray", showbackground=True),
+        aspectratio=dict(x=1, y=1, z=0.6)
+    ),
+    margin=dict(l=0, r=0, b=0, t=40),
+    paper_bgcolor='#0e1117',
+)
+
+# عرض الرسم التفاعلي في التطبيق
+st.plotly_chart(fig, use_container_width=True)
+
+# 3. استخراج وحفظ المفتاح المشترك في الذاكرة السحابية للجلسة
+# نأخذ مقطعاً من المصفوفة لتوليد الـ Bits الثابتة للمفتاح
+raw_bits = "".join(["1" if val > 0 else "0" for val in Z[0][:64]])
 hashed_key = hashlib.sha384(raw_bits.encode() + str(seed_factor).encode()).hexdigest().upper()
-st.session_state['master_key'] = f"ZETA-INFINITY-{hashed_key[:16]}-{hashed_key[16:32]}"
+st.session_state['master_key'] = f"ZETA-3D-INF-{hashed_key[:16]}-{hashed_key[16:32]}"
 
-st.subheader("🔑 مفتاح التشفير الرئيسي النشط حالياً:")
+st.subheader("🔑 مفتاح التشفير الرئيسي ثلاثي الأبعاد المستخرج:")
 st.code(st.session_state['master_key'], language="text")
-st.success("📝 تم حفظ هذا المفتاح بنجاح! يمكنك الآن الانتقال لصفحة 'خزنة التشفير' لاستخدامه عملياً في تشفير ملفاتك.")
-
+st.success("📝 تم تحديث البيئة وحفظ المفتاح بنجاح! اذهب الآن إلى 'خزنة التشفير' لتشفير ملفاتك باستخدام طيف ريمان ثلاثي الأبعاد الجديد.")
