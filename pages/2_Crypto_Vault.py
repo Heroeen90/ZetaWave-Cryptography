@@ -1,6 +1,8 @@
 import streamlit as st
 import hashlib
 import time
+import numpy as np
+import plotly.graph_objects as go
 from Crypto.Cipher import AES
 
 # إعدادات الصفحة الأساسية
@@ -129,17 +131,15 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# إدارة الـ States الأساسية للعمليات
+# إدارة الـ States الأساسية
 if 'master_key' not in st.session_state:
     st.session_state['master_key'] = "ZETA-3D-INF-9923-881A-QUANTUM"
-
 if 'logs' not in st.session_state:
     st.session_state['logs'] = []
-
 if 'is_pro' not in st.session_state:
     st.session_state['is_pro'] = True
 
-# زر العودة السريعة للصفحة الرئيسية (بوابة الحساب) لسهولة الحركة من الموبايل
+# زر العودة السريعة للصفحة الرئيسية
 if st.button("⬅️ العودة لبوابة الحساب والاشتراكات الرئيسية", use_container_width=True):
     st.switch_page("app.py")
 
@@ -147,21 +147,22 @@ if st.button("⬅️ العودة لبوابة الحساب والاشتراكا
 st.markdown("""
 <div class="hero-container">
     <div class="hero-title">🛡️ CRYPTO VAULT PRO</div>
-    <div class="hero-subtitle">نظام الحماية الفوق-أمنية القائم على معيار التشفير العسكري AES-256-GCM.</div>
+    <div class="hero-subtitle">نظام الحماية الفوق-أمنية القائم على معيار التشفير العسكري AES-256-GCM وطيف ريمان الكمي.</div>
 </div>
 """, unsafe_allow_html=True)
 
-# عرض حالة الحساب العلوية التفاعلية
+# عرض حالة الحساب العلوية
 if st.session_state.get('is_pro', False):
     st.markdown("<div style='background: linear-gradient(90deg, rgba(0,210,255,0.1), rgba(121,40,202,0.1)); border: 1px dashed #00d2ff; padding: 10px; border-radius: 12px; text-align: center; margin-bottom: 15px;'><span style='color: #00d2ff; font-weight: bold; font-family: Cairo; font-size:13px;'>👑 نوع باقتك الحالية: باقة المطور المالك (كل الميزات مفتوحة)</span></div>", unsafe_allow_html=True)
 else:
     st.markdown("<div style='background: rgba(255,30,30,0.1); border: 1px solid #ff3333; padding: 10px; border-radius: 12px; text-align: center; margin-bottom: 15px;'><span style='color: #ff3333; font-weight: bold; font-family: Cairo; font-size:13px;'>👤 أنت تستخدم الحساب المجاني المحدود (يرجى الترقية من الصفحة الرئيسية)</span></div>", unsafe_allow_html=True)
 
-st.caption(f"🔒 بصمة مفتاح ريمان: `{st.session_state['master_key']}`")
+st.caption(f"🔒 بصمة مفتاح ريمان الثابت: `{st.session_state['master_key']}`")
 
-# بناء التبويبات الأربعة الأساسية للمنصة
-tab1, tab2, tab3, tab4 = st.tabs(["🔒 التشفير الآمن", "🔓 فك التشفير", "📜 السجل الحي", "🎛️ المحلل الذكي"])
+# 🛠️ إضافة التبويب الجديد "🌌 النطاق الكمي والمعاملات" إلى القائمة
+tab1, tab2, tab5, tab3, tab4 = st.tabs(["🔒 التشفير الآمن", "🔓 فك التشفير", "🌌 النطاق الكمي والمعاملات", "📜 السجل الحي", "🎛️ المحلل الذكي"])
 
+# دالات التشفير الأساسية
 def aes_encrypt(data: bytes, key_str: str) -> bytes:
     secret_key = hashlib.sha256(key_str.encode()).digest()
     cipher = AES.new(secret_key, AES.MODE_GCM)
@@ -175,6 +176,61 @@ def aes_decrypt(payload: bytes, key_str: str) -> bytes:
     ciphertext = payload[32:]
     cipher = AES.new(secret_key, AES.MODE_GCM, nonce=nonce)
     return cipher.decrypt_and_verify(ciphertext, tag)
+
+
+# --- 🌌 تبويب النطاق الكمي والمعاملات والمخططات البيانية الجديد ---
+with tab5:
+    st.markdown("<div class='saas-card'>", unsafe_allow_html=True)
+    st.write("### 🌌 نظام التعديل الرياضي والمحاكاة ثلاثية الأبعاد")
+    
+    # 1. تفعيل وضع اللانهاية الكمي
+    q_infinity = st.toggle("♾️ تفعيل وضع النطاق اللامتناهي (Quantum Infinity Mode)", value=True, key="quantum_inf_tg")
+    
+    if q_infinity:
+        st.markdown("""
+        <div style="background: rgba(0,210,255,0.07); border: 1px solid rgba(0,210,255,0.3); padding: 12px; border-radius: 10px; margin-bottom: 15px;">
+            <span style="color: #00d2ff; font-weight: bold; font-family: Cairo; font-size: 13px;">⚡ وضع اللانهاية نشط: يتم حساب طيف التداخل كدالة تكاملية متصلة تمثل كافة الأصفار.</span>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # 2. المعامل الحركي الأول: حجم الأصفار بالتريليون
+        zero_size = st.slider("🎚️ حدد حجم الأصفار (بالتريليون):", min_value=10, max_value=1000, value=810, step=10)
+    else:
+        zero_size = 100
+        
+    # 3. المعامل الحركي الثاني: عامل التغيير الديناميكي (Seed Factor) بدون قيود تجميد القيمة
+    seed_factor = st.number_input("🔑 عامل التغيير الديناميكي (Seed Factor):", min_value=1, max_value=999999999999999, value=77777, step=1)
+    
+    st.write("---")
+    st.write("### 📊 محاكاة التداخل الموجي ثلاثي الأبعاد لطيف ريمان الكمي")
+    
+    # بناء الرسم البياني الرياضي ثلاثي الأبعاد تفاعلياً بناءً على المعاملات المحددة
+    with st.spinner("⏳ جاري توليد البنية الرياضية للموجة الكوانتية..."):
+        x = np.linspace(-5, 5, 50)
+        y = np.linspace(-5, 5, 50)
+        X, Y = np.meshgrid(x, y)
+        
+        # دالة رياضية موجية تتأثر بالـ Seed Factor وحجم الأصفار ديناميكياً
+        Z = np.sin(np.sqrt(X**2 + Y**2) + (seed_factor % 100)) * np.cos(X / (zero_size / 200)) + 1
+        
+        fig = go.Figure(data=[go.Surface(z=Z, x=X, y=Y, colorscale='Viridis')])
+        fig.update_layout(
+            title='كثافة الموجة الحركية المشفرة للأبعاد',
+            autosize=True,
+            margin=dict(l=0, r=0, b=0, t=40),
+            scene=dict(
+                xaxis_title='البعد X',
+                yaxis_title='البعد Y',
+                zaxis_title='كثافة الموجة'
+            ),
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='#f3f4f6')
+        )
+        
+        st.plotly_chart(fig, use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
 
 # --- تبويب التشفير ---
 with tab1:
@@ -322,3 +378,4 @@ with tab4:
                 """, unsafe_allow_html=True)
             else: st.error("الرجاء إدخال نص أولاً.")
         st.markdown("</div>", unsafe_allow_html=True)
+
