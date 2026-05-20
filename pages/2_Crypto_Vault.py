@@ -154,7 +154,7 @@ elif selected_option == "النطاق الكمي والمعاملات 📑":
     """, unsafe_allow_html=True)
     
     st.markdown("<p style='font-size: 14px; font-weight: bold;'>🔑 عامل التغيير الديناميكي (Seed Factor):</p>", unsafe_allow_html=True)
-    seed_factor_str = st.text_input("", value="767777664646466464646")
+    seed_factor_str = st.text_input("", value="0101")
     
     try:
         pure_numeric = int(''.join(filter(str.isdigit, seed_factor_str))) if seed_factor_str else 1
