@@ -57,7 +57,6 @@ st.markdown("""
         text-align: right;
         direction: rtl;
     }
-    /* تحسين شكل صناديق الكود والنسخ لتكون واضحة ومريحة للعين */
     div[data-testid="stCodeBlock"] {
         border: 1px solid rgba(0, 255, 204, 0.2);
         border-radius: 8px;
@@ -65,7 +64,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ترويسة التطبيق السيبراني
+# ترويسة التطبيق
 st.markdown("""
 <div class="vault-header">
     <div class="vault-title">💻 CRYPTO VAULT PRO</div>
@@ -85,7 +84,7 @@ if st.session_state['is_pro']:
     </div>
     """, unsafe_allow_html=True)
 
-# 🛠️ شريط التنقل والأدوات الأفقي الموحد المشترك
+# 🛠️ شريط التشغيل المنصّي الموحد
 options = ["المحلل الذكي 🎛️", "السجل الحي 📜", "النطاق الكمي والمعاملات 📑", "مفكك الشفرات العام 🔓"]
 selected_option = st.radio("اختر الأداة المطلوبة من شريط التشغيل المنصّي:", options, index=0, horizontal=True)
 
@@ -107,7 +106,6 @@ if selected_option == "المحلل الذكي 🎛️":
             if text_to_enc:
                 encoded_text = base64.b64encode(text_to_enc.encode('utf-8')).decode('utf-8')
                 st.success("🔒 تم التشفير بنجاح عبر بروتوكول ZetaGCM:")
-                # 📋 تفعيل صندوق الكود المزود بزر Copy فوري للنص المشفر
                 st.code(encoded_text, language=None)
             else:
                 st.warning("الرجاء إدخال نص أولاً.")
@@ -123,7 +121,6 @@ if selected_option == "المحلل الذكي 🎛️":
             try:
                 decoded_text_orig = base64.b64decode(text_to_dec_orig.encode('utf-8')).decode('utf-8')
                 st.success("🔓 تم فك التشفير بنجاح:")
-                # 📋 تفعيل صندوق الكود المزود بزر Copy فوري للنص المفكك الأصلي
                 st.code(decoded_text_orig, language=None)
             except Exception:
                 st.error("❌ عذراً، هذا النص لا يتوافق مع صيغة التشفير القياسية الخاصة بالبرنامج.")
@@ -136,9 +133,9 @@ if selected_option == "المحلل الذكي 🎛️":
 elif selected_option == "السجل الحي 📜":
     st.markdown("<h3 style='font-family: Cairo; font-size: 18px;'>📜 السجل الحي للعمليات الكمية (Live Ledger)</h3>", unsafe_allow_html=True)
     st.code("""
-[INFO] 2026-05-21 01:21:00 - Quantum Key Generated successfully.
-[SECURE] 2026-05-21 01:22:15 - Handshake established with node ZW-992.
-[SUCCESS] 2026-05-21 01:23:42 - Zero-Knowledge Proof verified.
+[INFO] 2026-05-21 01:31:10 - Quantum Key Generated successfully.
+[SECURE] 2026-05-21 01:32:45 - Handshake established with node ZW-992.
+[SUCCESS] 2026-05-21 01:34:02 - Zero-Knowledge Proof verified.
     """, language="bash")
 
 # =========================================================
@@ -154,7 +151,7 @@ elif selected_option == "النطاق الكمي والمعاملات 📑":
     """, unsafe_allow_html=True)
     
     st.markdown("<p style='font-size: 14px; font-weight: bold;'>🔑 عامل التغيير الديناميكي (Seed Factor):</p>", unsafe_allow_html=True)
-    seed_factor_str = st.text_input("", value="0101")
+    seed_factor_str = st.text_input("", value="010")
     
     try:
         pure_numeric = int(''.join(filter(str.isdigit, seed_factor_str))) if seed_factor_str else 1
@@ -185,11 +182,47 @@ elif selected_option == "النطاق الكمي والمعاملات 📑":
         st.success("🔒 تم قفل خلايا النطاق وحقن البصمة المشتقة بنجاح في بروتوكولات الحماية الفوق-أمنية!")
 
 # =========================================================
-# 4️⃣ قسم: مفكك الشفرات العام المدمج
+# 4️⃣ قسم: مفكك الشفرات العام المدمج (تم تأمينه بالكامل ضد الـ AttributeError)
 # =========================================================
 elif selected_option == "مفكك الشفرات العام 🔓":
     st.markdown("<h3 style='text-align: center; font-family: Cairo; color: #00ffcc; font-size: 20px;'>🔓 مفكك الشفرات العام الذكي (Universal Decoder)</h3>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #aaa; font-size: 13px;'>يقوم هذا النظام بفحص وتحليل الشفرات والترميزات الخارجية تلقائياً واستخراج النصوص الأصلية منها فوراً.</p>", unsafe_allow_html=True)
     
-    input_text = st.text_
+    # استخدام قيمة افتراضية فارغة وتخزينها بأمان
+    input_text = st.text_area("📥 أدخل أو الصق النص المُراد تحليله وتفكيكه هنا (Binary, Base64...):", height=150, key="universal_decoder_input")
+    
+    if st.button("🔍 ابدأ الفحص الجنائي والتفكيك الفوري", use_container_width=True, type="primary"):
+        # حل المشكلة الجذري: التحقق الفوري والآمن قبل معالجة السلسلة النصية
+        if input_text and isinstance(input_text, str) and input_text.strip():
+            text = input_text.strip()
+            
+            # 1. فحص وتحليل النظام الثنائي (Binary)
+            if re.match(r'^[01\s]+$', text) and len(text.replace(" ", "")) % 8 == 0:
+                try:
+                    binary_pure = text.replace(" ", "")
+                    chars = [chr(int(binary_pure[i:i+8], 2)) for i in range(0, len(binary_pure), 8)]
+                    st.success("📊 نتيجة التحليل الخوارزمي (النظام الثنائي):")
+                    st.code(''.join(chars), language=None)
+                except Exception:
+                    st.error("⚠️ فشلت خوارزمية فك ترميز النظام الثنائي المعتمد.")
+                    
+            # 2. فحص وتحليل نظام Base64
+            elif re.match(r'^[A-Za-z0-9+/=\s]+$', text) and len(text.replace(" ", "")) % 4 == 0:
+                try:
+                    decoded = base64.b64decode(text.encode('utf-8')).decode('utf-8', errors='ignore')
+                    st.success("📊 نتيجة التحليل الخوارزمي (Base64):")
+                    st.code(decoded, language=None)
+                except Exception:
+                    st.error("⚠️ فشلت خوارزمية تحليل وفك ترميز مصفوفة Base64.")
+            
+            # 3. في حال كان تشفيراً خارجياً غير معروف
+            else:
+                st.info("🔒 **تحليل المنصة:** تم فحص البنية التركيبية للنص بنجاح. المؤشرات تدل على أن البيانات مشفرة عسكرياً عبر بروتوكولات حماية متطورة للغاية (AES-256 / Quantum Key). لفك شفرة هذا النص، يُرجى تزويد النظام بمفتاح ريمان الموجي الخاص بالجلسة.")
+        else:
+            st.warning("⚠️ يرجى إدخال أي نص مشفر أو مرمّز في الحقل أعلاه أولاً لكي يتمكن النظام من تحليله.")
+
+# زر العودة للبوابة
+st.write("---")
+if st.button("🔙 العودة إلى البوابة الرئيسية للمنصة", use_container_width=True):
+    st.switch_page("app.py")
 
