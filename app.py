@@ -11,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# تصميم واجهة مخصصة بـ CSS
+# تصميم واجهة مخصصة بـ CSS (تعديل المعلمة الصحيحة هنا)
 st.markdown("""
     <style>
     .main { background-color: #0e1117; }
@@ -20,7 +20,7 @@ st.markdown("""
     .stButton>button:hover { background-color: #00b399; color: white; }
     .success-box { padding: 15px; background-color: #1e293b; border-left: 5px solid #00ffcc; border-radius: 5px; color: #e2e8f0; }
     </style>
-""", unsafe_scale=True)
+""", unsafe_allow_html=True)
 
 st.title("🛡️ ZetaWave Quantum Shield")
 st.write("---")
@@ -35,7 +35,6 @@ with col2:
     seed_factor = st.number_input("🔑 عامل التغيير الديناميكي (Seed Factor):", min_value=1, max_value=999999, value=42391)
 
 # 3. محرك المحاكاة الرياضية المتقدم للـ تريليون صفر
-# نستخدم دالة جيبية متراكبة تعتمد على القفزات اللوغاريتمية للأعداد الأولية الكبرى بمقياس التريليون لقيم جاما (Gamma)
 x = np.linspace(1, 50, 400)
 wave_sum = np.zeros_like(x, dtype=float)
 
@@ -81,7 +80,6 @@ with tab1:
     if st.button("تشفير النص الآن"):
         if user_text:
             encrypted = xor_cipher(user_text, master_key)
-            # تحويل النص لـ Hex لتسهيل النقل
             encrypted_hex = encrypted.encode('utf-8', errors='ignore').hex().upper()
             st.markdown("<div class='success-box'><b>🔒 النص المشفر بنجاح (احفظه في مكان آمن):</b></div>", unsafe_allow_html=True)
             st.code(encrypted_hex, language="text")
@@ -101,4 +99,4 @@ with tab2:
             except Exception as e:
                 st.error("فشل فك التشفير. تأكد من أن النص المشفر صحيح وأنك تستخدم نفس إعدادات الموجة والمفتاح.")
         else:
-            st.warning("الرجاء إدخال نص مشفر لفك شفرته.")
+            st.warning("الرجاء إدخل نص مشفر لفك شفرته.")
