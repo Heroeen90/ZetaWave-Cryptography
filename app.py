@@ -1,7 +1,7 @@
 import streamlit as st
 import time
 
-# إعدادات الصفحة الرئيسية
+# إعدادات الصفحة الرئيسية للموقع
 st.set_page_config(
     page_title="ZetaWave Quantum Platform",
     page_icon="🛡️",
@@ -39,7 +39,7 @@ st.markdown("""
     }
     .hero-desc {
         color: #9ca3af;
-        font-size: 18px;
+        font-size: 17px;
         max-width: 600px;
         margin: 0 auto 40px auto;
         line-height: 1.6;
@@ -84,10 +84,15 @@ st.markdown("""
         margin: 15px 0;
     }
     .price-val span { font-size: 16px; color: #888; }
+    
+    [data-testid="stSidebar"] {
+        background-color: #05070f !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.03);
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# --- إدارة حالة الاشتراك في السايدبار الجانبي ---
+# إدارة حالة الحساب المشترك في السايدبار الجانبي لجميع الصفحات
 if 'is_pro' not in st.session_state:
     st.session_state['is_pro'] = False
 
@@ -96,35 +101,24 @@ with st.sidebar:
     st.write("---")
     
     if st.session_state['is_pro']:
-        st.markdown("""
-        <div style='background: rgba(0, 210, 255, 0.1); border: 1px solid #00d2ff; padding: 15px; border-radius: 12px; text-align: center;'>
-            <span style='color: #00d2ff; font-weight: bold; font-family: Cairo;'>👑 الحساب: الباقة الاحترافية (نشط)</span>
-            <br><small style='color: #888;'>الاشتراك يتجدد تلقائياً</small>
-        </div>
-        """, unsafe_allow_html=True)
-        if st.button("تسجيل الخروج من الباقة"):
+        st.markdown("<div style='background: rgba(0, 210, 255, 0.1); border: 1px solid #00d2ff; padding: 15px; border-radius: 12px; text-align: center;'><span style='color: #00d2ff; font-weight: bold; font-family: Cairo;'>👑 الحساب: الباقة الاحترافية (نشط)</span></div>", unsafe_allow_html=True)
+        if st.button("تسجيل الخروج من الباقة", key="main_logout"):
             st.session_state['is_pro'] = False
             st.rerun()
     else:
-        st.markdown("""
-        <div style='background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 15px;'>
-            <span style='color: #888; font-family: Cairo;'>👤 الحساب الحالي: الباقة المجانية</span>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("<div style='background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 15px;'><span style='color: #888; font-family: Cairo;'>👤 الحساب الحالي: الباقة المجانية</span></div>", unsafe_allow_html=True)
         
-        # حقل إدخال كود التفعيل الافتراضي لعملائك المشتركين
-        license_key = st.text_input("أدخل كود تفعيل اشتراكك (License Key):", type="password")
-        if st.button("🚀 تفعيل الحساب والترقية", use_container_width=True):
-            # كود التفعيل السري الخاص بك (يمكنك تغييره لأي كلمة ترييدها)
+        license_key = st.text_input("أدخل كود تفعيل اشتراكك (License Key):", type="password", key="main_lic_input")
+        if st.button("🚀 تفعيل الحساب والترقية", use_container_width=True, key="main_lic_btn"):
             if license_key == "ZETA-PRO-2026":
                 st.session_state['is_pro'] = True
-                st.toast("تمت الترقية إلى الباقة الاحترافية بنجاح! 🎉", icon="✅")
-                time.sleep(1)
+                st.toast("تمت الترقية إلى الباقة الاحترافية بنجاح! 🎉")
+                time.sleep(0.5)
                 st.rerun()
             else:
-                st.error("❌ كود التفعيل غير صحيح أو منتهي الصلاحية.")
+                st.error("❌ كود التفعيل غير صحيح.")
 
-# --- عرض الـ Hero Section والأسعار في الواجهة الرئيسية ---
+# عرض الـ Hero Section والأسعار
 st.markdown("""
 <div class="main-hero">
     <div class="brand-glow">ZETAWAVE SUITE</div>
@@ -139,8 +133,8 @@ st.markdown("""
         <p style='color: #888; font-size: 14px;'>تناسب الأفراد لتجربة التشفير البسيط</p>
         <hr style='border-color: rgba(255,255,255,0.05)'>
         <ul style='text-align: right; color: #bbb; font-size: 13px; font-family: Cairo;'>
-            <li>✓ تشفير وفك تشفير النصوص</li>
-            <li>✓ مفتاح موجي افتراضي</li>
+            <li>✓ تشفير وفك تشفير النصوص السريّة</li>
+            <li>✓ مفتاح موجي افتراضي متغير</li>
             <li>✗ تشفير الملفات الحقيقية مقفل</li>
             <li>✗ محلل الشفرات الذكي مقفل</li>
         </ul>
@@ -152,11 +146,12 @@ st.markdown("""
         <p style='color: #888; font-size: 14px;'>للشركات ومحترفي الأمن السيبراني</p>
         <hr style='border-color: rgba(0, 210, 255, 0.2)'>
         <ul style='text-align: right; color: #bbb; font-size: 13px; font-family: Cairo;'>
-            <li>✓ كل ميزات الباقة المجانية</li>
-            <li>✓ تشفير مفتوح للمللفات بجميع الأحجام</li>
-            <li>✓ الوصول الكامل لمحلل الشفرات الذكي</li>
-            <li>✓ وضع اللانهاية الكمي الفوق-أمن</li>
+            <li>✓ كل ميزات الباقة المجانية بالكامل</li>
+            <li>✓ تشفير مفتوح للملفات بجميع الأحجام</li>
+            <li>✓ الوصول الكامل لمحلل الشفرات الذكي الجنائي</li>
+            <li>✓ وضع اللانهاية الكمي الفوق-أمن دائم</li>
         </ul>
     </div>
 </div>
 """, unsafe_allow_html=True)
+
