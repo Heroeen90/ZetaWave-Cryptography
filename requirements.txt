@@ -1,4 +1,5 @@
 streamlit
+stripe
 numpy
 matplotlib
 pycryptodome
