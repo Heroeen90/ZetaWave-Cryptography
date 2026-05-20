@@ -20,7 +20,6 @@ st.markdown("""
     }
     
     [data-testid="stToolbar"] {visibility: hidden;}
-    [data-testid="stSidebar"] {display: none !important;}
     
     .main-hero {
         text-align: center;
@@ -44,16 +43,6 @@ st.markdown("""
         margin: 0 auto 25px auto;
         line-height: 1.6;
     }
-    .pricing-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        margin-top: 10px;
-        margin-bottom: 20px;
-    }
-    @media (max-width: 600px) {
-        .pricing-grid { grid-template-columns: 1fr; }
-    }
     .price-card {
         background: rgba(17, 24, 39, 0.45);
         backdrop-filter: blur(20px);
@@ -62,6 +51,7 @@ st.markdown("""
         padding: 20px;
         text-align: center;
         position: relative;
+        margin-bottom: 15px;
     }
     .pro-card {
         border-color: #00d2ff;
@@ -97,14 +87,13 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🛠️ الإصلاح الجوهري: إدارة تهيئة الجلسة للمالك دون التسبب في تعليق الأزرار
+# إدارة تهيئة الجلسة للمالك
 if 'is_pro' not in st.session_state:
-    st.session_state['is_pro'] = True  # القيمة الافتراضية لك هي تفعيل ميزات الـ Pro دائماً كمالك للمنصة
+    st.session_state['is_pro'] = True 
 
 # عرض لوحة التحكم الفورية بالحساب
 st.markdown("<h3 style='font-family: Cairo; text-align: center; font-size: 20px;'>💼 بوابة التحكم بالحساب الرقمي</h3>", unsafe_allow_html=True)
 
-# التحقق من الحالة الحالية وعرض التنبيه المناسب
 if st.session_state['is_pro']:
     st.markdown("""
     <div class="owner-box">
@@ -112,6 +101,10 @@ if st.session_state['is_pro']:
     </div>
     """, unsafe_allow_html=True)
     
+    # 🚀 الحل العبقري: زر الدخول الفوري للأدوات والمعاملات دون الحاجة للقائمة الجانبية
+    if st.button("🔥 الدخول المباشر إلى لوحة أدوات التشفير والمعاملات 💻", use_container_width=True, type="primary"):
+        st.switch_page("pages/2_Crypto_Vault.py")
+        
     if st.button("🔄 محاكاة حساب عميل مجاني (لاختبار القيود)", use_container_width=True):
         st.session_state['is_pro'] = False
         st.rerun()
@@ -144,7 +137,7 @@ with col1:
     <div class="price-card">
         <h3 style='color: #fff; font-family: Cairo; font-size: 16px;'>الباقة الأساسية (Free)</h3>
         <div class="price-val">$0 <span>/ شهرياً</span></div>
-        <p style='color: #888; font-size: 13px; margin-bottom: 10px;'>تناسب الأفراد لتجرفة التشفير البسيط</p>
+        <p style='color: #888; font-size: 13px; margin-bottom: 10px;'>تناسب الأفراد لتجربة التشفير البسيط</p>
         <hr style='border-color: rgba(255,255,255,0.05); margin-bottom: 10px;'>
         <ul style='text-align: right; color: #bbb; font-size: 12px; font-family: Cairo; direction: rtl; padding-right: 15px; min-height: 100px;'>
             <li>✓ تشفير وفك تشفير النصوص السريّة</li>
@@ -165,7 +158,7 @@ with col2:
         <hr style='border-color: rgba(0, 210, 255, 0.2); margin-bottom: 10px;'>
         <ul style='text-align: right; color: #bbb; font-size: 12px; font-family: Cairo; direction: rtl; padding-right: 15px; min-height: 100px;'>
             <li>✓ كل ميزات الباقة المجانية بالكامل</li>
-            <li>✓ تشفير مفتوح للمللفات بجميع الأحجام</li>
+            <li>✓ تشفير مفتوح للملفات بجميع الأحجام</li>
             <li>✓ الوصول الكامل لمحلل الشفرات الجنائي</li>
             <li>✓ وضع اللانهاية الكمي الفوق-أمن</li>
         </ul>
