@@ -20,7 +20,7 @@ try:
 except KeyError:
     st.warning("⚠️ تحذير سيبراني: لم يتم ضبط المفتاح السري 'STRIPE_SECRET_KEY' في إعدادات المنصة بعد.")
 
-# حقن ثيم الـ SaaS الاحترافي المتوافق تماماً مع الموبايل
+# حقن ثيم الـ SaaS وحقن أيقونة ملء الشاشة العائمة الذكية (جافا سكريبت متطور)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;600&family=Space+Grotesk:wght=500;700&family=Cairo:wght=400;700&display=swap');
@@ -32,6 +32,34 @@ st.markdown("""
     }
     
     [data-testid="stToolbar"] {visibility: hidden;}
+    
+    /* تصميم الزر العائم الاحترافي لملء الشاشة */
+    .fullscreen-btn {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #00d2ff 0%, #7928ca 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4);
+        cursor: pointer;
+        z-index: 999999;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .fullscreen-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(0, 210, 255, 0.6);
+    }
+    .fullscreen-btn svg {
+        width: 24px;
+        height: 24px;
+        fill: #ffffff;
+    }
     
     .main-hero {
         text-align: center;
@@ -98,30 +126,36 @@ st.markdown("""
         margin-bottom: 20px;
     }
     </style>
-""", unsafe_allow_html=True)
 
-# 📱 دالة جافا سكريبت لتفعيل وضع ملء الشاشة الكاملة كأنه تطبيق مستقل
-def trigger_fullscreen():
-    js_code = """
+    <div class="fullscreen-btn" id="fs-toggle-btn" onclick="togglePlatformFullscreen()">
+        <svg viewBox="0 0 24 24" id="fs-icon">
+            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+        </svg>
+    </div>
+
     <script>
+    function togglePlatformFullscreen() {
+        // الوصول إلى عنصر الصفحة الرئيسي داخل إطار Streamlit
         var doc = window.parent.document.documentElement;
+        var fsButton = document.getElementById('fs-toggle-btn');
+        var fsIcon = document.getElementById('fs-icon');
+
         if (!window.parent.document.fullscreenElement) {
-            doc.requestFullscreen().catch(err => {
-                alert(`خطأ أثناء تفعيل ملء الشاشة: ${err.message}`);
+            doc.requestFullscreen().then(() => {
+                // تغيير شكل الأيقونة إلى وضع الخروج عند التفعيل الناجح
+                fsIcon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
+            }).catch(err => {
+                console.log("Fullscreen Error: " + err.message);
             });
         } else {
-            window.parent.document.exitFullscreen();
+            window.parent.document.exitFullscreen().then(() => {
+                // إعادة الأيقونة لوضع ملء الشاشة العادي عند الخروج
+                fsIcon.innerHTML = '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
+            });
         }
+    }
     </script>
-    """
-    st.components.v1.html(js_code, height=0, width=0)
-
-# إضافة زر وضع التطبيق المستقل في أعلى الواجهة لسهولة الوصول
-st.markdown("<p style='text-align: center; color: #888; font-size: 12px; font-family: Cairo; margin-bottom: 2px;'>⚙️ تخصيص العرض</p>", unsafe_allow_html=True)
-if st.button("📱 تفعيل وضع التطبيق المستقل (ملء الشاشة الكاملة)", use_container_width=True):
-    trigger_fullscreen()
-
-st.write("---")
+""", unsafe_allow_html=True)
 
 # إدارة تهيئة الجلسة للمالك والمحاكاة
 if 'is_pro' not in st.session_state:
@@ -232,3 +266,4 @@ with col2:
                 st.error(f"❌ حدث خطأ أثناء الاتصال ببوابة Stripe: {e}")
         else:
             st.success("🌟 باقتك نشطة بالفعل! يمكنك الذهاب مباشرة لصفحة الأدوات والمعاملات.")
+
