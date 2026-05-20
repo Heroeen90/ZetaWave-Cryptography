@@ -3,7 +3,7 @@ import hashlib
 import time
 from Crypto.Cipher import AES
 
-# إعدادات الصفحة الأساسية وحظر القوائم الافتراضية
+# إعدادات الصفحة الأساسية
 st.set_page_config(
     page_title="ZetaWave | Crypto Vault Pro",
     page_icon="🔒",
@@ -13,7 +13,7 @@ st.set_page_config(
 # حقن واجهة التشفير والـ CSS المتوافق مع شاشات الموبايل
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&family=Cairo:wght=400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;600&family=Space+Grotesk:wght=500;700&family=Cairo:wght=400;700&display=swap');
     
     .stApp {
         background: radial-gradient(circle at 50% 50%, #0b0f19 0%, #030712 100%);
@@ -22,7 +22,6 @@ st.markdown("""
     }
     
     [data-testid="stToolbar"] {visibility: hidden;}
-    [data-testid="stSidebar"] {display: none !important;}
     
     .hero-container {
         text-align: center;
@@ -130,7 +129,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🛠️ الإصلاح الجوهري للـ States لمنع تجمد الصفحة
+# إدارة الـ States الأساسية للعمليات
 if 'master_key' not in st.session_state:
     st.session_state['master_key'] = "ZETA-3D-INF-9923-881A-QUANTUM"
 
@@ -139,6 +138,10 @@ if 'logs' not in st.session_state:
 
 if 'is_pro' not in st.session_state:
     st.session_state['is_pro'] = True
+
+# زر العودة السريعة للصفحة الرئيسية (بوابة الحساب) لسهولة الحركة من الموبايل
+if st.button("⬅️ العودة لبوابة الحساب والاشتراكات الرئيسية", use_container_width=True):
+    st.switch_page("app.py")
 
 # عرض ترويسة الصفحة
 st.markdown("""
@@ -205,7 +208,6 @@ with tab1:
     else:
         if not st.session_state.get('is_pro', False):
             st.warning("🔒 ميزة تشفير الملفات مخصصة لمشتركي الباقة الاحترافية (Pro) فقط.")
-            st.info("💡 توجه للاستعراض السريع بالصفحة الرئيسية واضغط على تفعيل وضع المالك Pro.")
         else:
             uploaded_file = st.file_uploader("قم برفع الملف هنا:", key="file_vault_uploader")
             if st.button("⚡ بدء التشفير العسكري للملف", use_container_width=True, key="btn_run_file_vault"):
@@ -273,7 +275,6 @@ with tab3:
 with tab4:
     if not st.session_state.get('is_pro', False):
         st.warning("🎛️ نظام التحليل الجنائي ومحلل الشفرات الذكي مقفل ومخصص لحسابات (Pro) فقط.")
-        st.info("💡 قم بالترقية الفورية من خطط الأسعار بالصفحة الرئيسية لفتح التبويب.")
     else:
         st.markdown("<div class='saas-card'>", unsafe_allow_html=True)
         st.write("### 🎛️ نظام التحليل الجنائي للمخرجات")
@@ -321,4 +322,3 @@ with tab4:
                 """, unsafe_allow_html=True)
             else: st.error("الرجاء إدخال نص أولاً.")
         st.markdown("</div>", unsafe_allow_html=True)
-
