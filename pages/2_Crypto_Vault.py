@@ -3,18 +3,17 @@ import hashlib
 import time
 from Crypto.Cipher import AES
 
-# 1. إعدادات الصفحة الأساسية وحظر القوائم الافتراضية
+# إعدادات الصفحة الأساسية وحظر القوائم الافتراضية
 st.set_page_config(
     page_title="ZetaWave | Crypto Vault Pro",
     page_icon="🔒",
-    layout="centered",
-    initial_sidebar_state="expanded"
+    layout="centered"
 )
 
-# 2. حقن واجهة التشفير العالمية الفاخرة (Quantum Obsidian CSS)
+# حقن واجهة التشفير والـ CSS المتوافق مع شاشات الموبايل
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&family=Cairo:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;600&family=Space+Grotesk:wght=500;700&family=Cairo:wght=400;700&display=swap');
     
     .stApp {
         background: radial-gradient(circle at 50% 50%, #0b0f19 0%, #030712 100%);
@@ -22,94 +21,88 @@ st.markdown("""
         font-family: 'Inter', 'Cairo', sans-serif;
     }
     
-    /* إصلاح أمني: إخفاء عناصر المطورين فقط مع الإبقاء على زر السايدبار للموبايل */
     [data-testid="stToolbar"] {visibility: hidden;}
+    [data-testid="stSidebar"] {display: none !important;} /* إلغاء السايدبار لمنع الاختفاء */
     
     .hero-container {
         text-align: center;
-        padding: 35px 20px;
+        padding: 25px 15px;
         background: linear-gradient(135deg, rgba(0, 210, 255, 0.05) 0%, rgba(121, 40, 202, 0.05) 100%);
-        border-radius: 24px;
+        border-radius: 20px;
         border: 1px solid rgba(255, 255, 255, 0.03);
-        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
-        margin-bottom: 25px;
+        margin-bottom: 20px;
     }
     
     .hero-title {
         font-family: 'Space Grotesk', 'Cairo', sans-serif;
-        font-size: 30px;
+        font-size: 26px;
         font-weight: 700;
         background: linear-gradient(90deg, #00d2ff, #7928ca);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 8px;
+        margin-bottom: 5px;
     }
     
     .hero-subtitle {
         color: #9ca3af;
-        font-size: 14px;
+        font-size: 13px;
         max-width: 500px;
         margin: 0 auto;
     }
 
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
+        gap: 5px;
         background-color: rgba(17, 24, 39, 0.6);
-        padding: 6px;
-        border-radius: 14px;
+        padding: 5px;
+        border-radius: 12px;
         border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .stTabs [data-baseweb="tab"] {
-        height: 42px;
-        white-space: pre;
+        height: 40px;
+        font-size: 13px;
         background-color: transparent;
-        border-radius: 10px;
+        border-radius: 8px;
         color: #9ca3af;
         font-family: 'Cairo', sans-serif;
-        font-weight: 600;
-        border: none;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, rgba(0, 210, 255, 0.15) 0%, rgba(121, 40, 202, 0.15) 100%) !important;
         color: #00d2ff !important;
-        border: 1px solid rgba(0, 210, 255, 0.3) !important;
+        border: 1px solid rgba(0, 210, 255, 0.2) !important;
     }
 
     .saas-card {
         background: rgba(17, 24, 39, 0.45);
         backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 20px;
-        padding: 22px;
-        margin-top: 12px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        border-radius: 16px;
+        padding: 18px;
+        margin-top: 10px;
     }
     
     .analytics-panel {
         background: rgba(10, 15, 28, 0.8);
-        border-radius: 16px;
+        border-radius: 14px;
         border: 1px solid rgba(0, 210, 255, 0.2);
-        padding: 18px;
-        margin-top: 18px;
+        padding: 15px;
+        margin-top: 15px;
     }
     
     .panel-title {
         font-family: 'Cairo', sans-serif;
         color: #00d2ff;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 700;
         text-align: center;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
     
     .grid-container {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
+        gap: 8px;
     }
     
     @media (max-width: 600px) {
@@ -119,13 +112,13 @@ st.markdown("""
     .grid-box {
         background: rgba(255, 255, 255, 0.02);
         border: 1px solid rgba(255, 255, 255, 0.04);
-        border-radius: 12px;
-        padding: 12px;
+        border-radius: 10px;
+        padding: 10px;
         text-align: center;
     }
     
     .box-lbl { color: #9ca3af; font-size: 11px; font-family: 'Cairo', sans-serif; }
-    .box-val { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: #ffffff; }
+    .box-val { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: #ffffff; }
     .glow-txt { color: #00d2ff; text-shadow: 0 0 8px rgba(0, 210, 255, 0.5); }
 
     .stTextArea textarea, .stTextInput input {
@@ -134,15 +127,10 @@ st.markdown("""
         color: #f3f4f6 !important;
         border-radius: 12px !important;
     }
-    
-    [data-testid="stSidebar"] {
-        background-color: #05070f !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.03);
-    }
     </style>
 """, unsafe_allow_html=True)
 
-# الحفاظ على الـ States العامة
+# إدارة الـ States الأساسية للعمليات
 if 'master_key' not in st.session_state:
     st.session_state['master_key'] = "ZETA-3D-INF-9923-881A-QUANTUM"
 
@@ -150,26 +138,26 @@ if 'logs' not in st.session_state:
     st.session_state['logs'] = []
 
 if 'is_pro' not in st.session_state:
-    st.session_state['is_pro'] = True # الوضع الافتراضي للمطور هو النشاط الكامل دائماً
+    st.session_state['is_pro'] = True
 
-# السايدبار الجانبي لصفحة العمليات
-with st.sidebar:
-    st.markdown("<h3 style='font-family: Cairo; text-align: center;'>💼 حالة الباقة والترخيص</h3>", unsafe_allow_html=True)
-    st.write("---")
-    if st.session_state.get('is_pro', False):
-        st.markdown("<div style='background: linear-gradient(90deg, rgba(0,210,255,0.1), rgba(121,40,202,0.1)); border: 1px dashed #00d2ff; padding: 12px; border-radius: 12px; text-align: center;'><span style='color: #00d2ff; font-weight: bold; font-family: Cairo;'>👑 باقة المطور المالك (نشطة)</span></div>", unsafe_allow_html=True)
-    else:
-        st.markdown("<div style='background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; text-align: center;'><span style='color: #888; font-family: Cairo;'>👤 باقة أساسية محدودة</span></div>", unsafe_allow_html=True)
-
+# عرض ترويسة الصفحة وثنائية الدالة الكمية
 st.markdown("""
 <div class="hero-container">
     <div class="hero-title">🛡️ CRYPTO VAULT PRO</div>
-    <div class="hero-subtitle">الجيل القادم من أنظمة الحماية الفوق-أمنية القائمة على معيار التشفير العسكري AES-256-GCM.</div>
+    <div class="hero-subtitle">نظام الحماية الفوق-أمنية القائم على معيار التشفير العسكري AES-256-GCM.</div>
 </div>
 """, unsafe_allow_html=True)
 
-# بناء التبويبات الأربعة
-tab1, tab2, tab3, tab4 = st.tabs(["🔒 تشفير وحماية البيانات", "🔓 استرجاع وفك التشفير", "📜 سجل العمليات الحي", "🎛️ محلل الشفرات الذكي"])
+# وضع شريط الحالة التفاعلي للعملاء والمالك مباشرة في واجهة الخزنة العلوية
+if st.session_state.get('is_pro', False):
+    st.markdown("<div style='background: linear-gradient(90deg, rgba(0,210,255,0.1), rgba(121,40,202,0.1)); border: 1px dashed #00d2ff; padding: 10px; border-radius: 12px; text-align: center; margin-bottom: 15px;'><span style='color: #00d2ff; font-weight: bold; font-family: Cairo; font-size:13px;'>👑 نوع باقتك الحالية: باقة المطور المالك (كل الميزات مفتوحة)</span></div>", unsafe_allow_html=True)
+else:
+    st.markdown("<div style='background: rgba(255,30,30,0.1); border: 1px solid #ff3333; padding: 10px; border-radius: 12px; text-align: center; margin-bottom: 15px;'><span style='color: #ff3333; font-weight: bold; font-family: Cairo; font-size:13px;'>👤 أنت تستخدم الحساب المجاني المحدود (يرجى الترقية من الصفحة الرئيسية)</span></div>", unsafe_allow_html=True)
+
+st.caption(f"🔒 بصمة مفتاح ريمان: `{st.session_state['master_key']}`")
+
+# بناء التبويبات الأربعة الأساسية للمنصة
+tab1, tab2, tab3, tab4 = st.tabs(["🔒 التشفير الآمن", "🔓 فك التشفير", "📜 السجل الحي", "🎛️ المحلل الذكي"])
 
 def aes_encrypt(data: bytes, key_str: str) -> bytes:
     secret_key = hashlib.sha256(key_str.encode()).digest()
@@ -188,12 +176,12 @@ def aes_decrypt(payload: bytes, key_str: str) -> bytes:
 # --- تبويب التشفير ---
 with tab1:
     st.markdown("<div class='saas-card'>", unsafe_allow_html=True)
-    st.write("### 🚀 تشفير النصوص والملفات الفوري")
-    mode = st.pills("اختر نوع الهدف المُراد تأمينه:", ["نص سري للغاية", "ملف رقمي حقيقي (Pro)"], selection_mode="single", default="نص سري للغاية")
+    st.write("### 🚀 تشفير المخرجات")
+    mode = st.pills("اختر الهدف المُراد حمايته:", ["نص سري للغاية", "ملف رقمي حقيقي (Pro)"], selection_mode="single", default="نص سري للغاية", key="pills_vault_mode")
     
     if mode == "نص سري للغاية":
-        user_text = st.text_area("أدخل أو الصق المحتوى النصي هنا:", height=100, key="txt_enc_area")
-        if st.button("✨ تشفير وتوليد الرمز الهاشي", use_container_width=True, key="btn_enc_txt"):
+        user_text = st.text_area("أدخل أو الصق المحتوى النصي هنا:", height=90, key="txt_enc_vault")
+        if st.button("✨ تشفير وتوليد الرمز الهاشي", use_container_width=True, key="btn_enc_txt_vault"):
             if user_text:
                 t_start = time.time()
                 enc_bytes = aes_encrypt(user_text.encode('utf-8'), st.session_state['master_key'])
@@ -217,9 +205,10 @@ with tab1:
     else:
         if not st.session_state.get('is_pro', False):
             st.warning("🔒 ميزة تشفير الملفات مخصصة لمشتركي الباقة الاحترافية (Pro) فقط.")
+            st.info("💡 توجه للصفحة الرئيسية واضغط على تفعيل الباقة الاحترافية لتفتح لك الميزة سحرياً!")
         else:
-            uploaded_file = st.file_uploader("قم برفع الملف هنا:", key="file_uploader_vault")
-            if st.button("⚡ بدء التشفير العسكري للملف", use_container_width=True, key="btn_enc_file"):
+            uploaded_file = st.file_uploader("قم برفع الملف هنا:", key="file_vault_uploader")
+            if st.button("⚡ بدء التشفير العسكري للملف", use_container_width=True, key="btn_run_file_vault"):
                 if uploaded_file is not None:
                     t_start = time.time()
                     f_bytes = uploaded_file.read()
@@ -238,25 +227,25 @@ with tab1:
 # --- تبويب فك التشفير ---
 with tab2:
     st.markdown("<div class='saas-card'>", unsafe_allow_html=True)
-    st.write("### 🔓 فك التشفير والتحقق من سلامة البيانات")
-    dec_mode = st.pills("نوع البيانات المستهدفة:", ["نص مشفر (HEX)", "ملف محمي (.zeta)"], selection_mode="single", default="نص مشفر (HEX)", key="pills_dec_mode")
+    st.write("### 🔓 فك التشفير والاسترجاع")
+    dec_mode = st.pills("نوع البيانات المستهدفة:", ["نص مشفر (HEX)", "ملف محمي (.zeta)"], selection_mode="single", default="نص مشفر (HEX)", key="pills_dec_vault_mode")
     
     if dec_mode == "نص مشفر (HEX)":
-        hex_input = st.text_area("أدخل رمز الـ HEX المراد كشفه هنا:", key="hex_dec_input")
-        if st.button("🔓 تنفيذ عملية الكشف الفوري", use_container_width=True, key="btn_dec_hex"):
+        hex_input = st.text_area("أدخل رمز الـ HEX المراد كشفه هنا:", key="hex_vault_in")
+        if st.button("🔓 تنفيذ عملية الكشف الفوري", use_container_width=True, key="btn_dec_hex_vault"):
             if hex_input:
                 try:
                     clean_hex = hex_input.strip().replace(" ", "")
                     dec_bytes = aes_decrypt(bytes.fromhex(clean_hex), st.session_state['master_key'])
-                    st.success("🔓 تم فك الشفرة واستعادة الرسالة بنجاح:")
+                    st.success("🔓 تم استعادة الرسالة بنجاح:")
                     st.info(dec_bytes.decode('utf-8'))
                     st.session_state['logs'].append(f"🔓 {time.strftime('%H:%M:%S')} - تم فك شفرة نص سري.")
                 except Exception: st.error("❌ فشل أمني حرج: الرمز أو المفتاح الموجي غير متطابق!")
             else: st.warning("الرجاء إدخال الرمز.")
             
     else:
-        uploaded_zeta = st.file_uploader("ارفع الملف المشفر (.zeta):", type=["zeta"], key="file_uploader_zeta")
-        if st.button("🔓 استعادة الملف الأصلي", use_container_width=True, key="btn_dec_file"):
+        uploaded_zeta = st.file_uploader("ارفع الملف المشفر (.zeta):", type=["zeta"], key="zeta_vault_uploader")
+        if st.button("🔓 استعادة الملف الأصلي", use_container_width=True, key="btn_dec_file_vault"):
             if uploaded_zeta is not None:
                 try:
                     z_bytes = uploaded_zeta.read()
@@ -274,7 +263,7 @@ with tab2:
 # --- تبويب السجل ---
 with tab3:
     st.markdown("<div class='saas-card'>", unsafe_allow_html=True)
-    st.write("### 📜 سجل الرصد والمراقبة الأمني (Audit Logs)")
+    st.write("### 📜 سجل الرصد الحركي (Audit Logs)")
     if st.session_state['logs']:
         for log in reversed(st.session_state['logs']): st.code(log, language="text")
     else: st.caption("🪐 السجل فارغ حالياً.")
@@ -284,12 +273,13 @@ with tab3:
 with tab4:
     if not st.session_state.get('is_pro', False):
         st.warning("🎛️ نظام التحليل الجنائي ومحلل الشفرات الذكي مقفل ومخصص لحسابات (Pro) فقط.")
+        st.info("💡 قم بالترقية الفورية من خطط الأسعار بالصفحة الرئيسية لفتح التبويب.")
     else:
         st.markdown("<div class='saas-card'>", unsafe_allow_html=True)
-        st.write("### 🎛️ نظام التحليل الجنائي للمخرجات المشفرة")
-        analysis_input = st.text_area("أدخل النص المشفر المراد فحصه عشوائياً:", key="analysis_vault_input")
+        st.write("### 🎛️ نظام التحليل الجنائي للمخرجات")
+        analysis_input = st.text_area("أدخل النص المشفر المراد فحصه عشوائياً:", key="analysis_vault_txt")
         
-        if st.button("🔍 بدء الفحص والتحليل الجنائي", use_container_width=True, key="btn_run_analysis"):
+        if st.button("🔍 بدء الفحص والتحليل الجنائي", use_container_width=True, key="btn_run_ana_vault"):
             if analysis_input:
                 text_pure = analysis_input.strip()
                 length = len(text_pure)
@@ -305,29 +295,30 @@ with tab4:
                 
                 if length == 32 and all(c in "0123456789ABCDEFabcdef" for c in text_pure):
                     predicted_type = "بصمة رقمية من نوع MD5 Hash"
-                    strength_status = "ضعيف (مرفوض معيارياً لسهولة الكسر)"
+                    strength_status = "ضعيف"
                 elif length == 64 and all(c in "0123456789ABCDEFabcdef" for c in text_pure):
                     predicted_type = "تشفير أحادي الاتجاه SHA-256"
                     strength_status = "آمن جداً (معيار عالمي موثوق)"
                     glow_color = "#00d2ff"
                 elif all(c in "0123456789ABCDEFabcdef \n" for c in text_pure) and length > 40:
                     predicted_type = "تشفير كتلي متناظر (AES-GCM / HEX Stream)"
-                    strength_status = "حصانة عسكرية (مقاوم للاختراق الكمي)"
+                    strength_status = "حصانة عسكرية (مقاوم للاختراق)"
                     glow_color = "#00d2ff"
                 elif (length % 4 == 0) and all(c in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=" for c in text_pure):
                     predicted_type = "نص مرمز بصيغة Base64 Encoding"
-                    strength_status = "ترميز فقط (لا يعتبر حماية حقيقية)"
+                    strength_status = "ترميز فقط"
                     glow_color = "#7928ca"
                     
                 st.markdown(f"""
                 <div class="analytics-panel" style="border-color: {glow_color};">
                     <div class="panel-title" style="color: {glow_color}; text-shadow: 0 0 10px {glow_color};">📊 نتائج الفحص الهيكلي والتحليل</div>
                     <div class="grid-container">
-                        <div class="grid-box"><div class="box-lbl">النوع المتوقع (Prediction)</div><div class="box-val" style="font-size:13px;">{predicted_type}</div></div>
-                        <div class="grid-box"><div class="box-lbl">معدل العشوائية (Entropy)</div><div class="box-val" style="color:{glow_color}; font-size:20px;">{entropy:.2f} / 8.00</div></div>
+                        <div class="grid-box"><div class="box-lbl">النوع المتوقع (Prediction)</div><div class="box-val" style="font-size:12px;">{predicted_type}</div></div>
+                        <div class="grid-box"><div class="box-lbl">معدل العشوائية (Entropy)</div><div class="box-val" style="color:{glow_color}; font-size:18px;">{entropy:.2f} / 8.00</div></div>
                         <div class="grid-box"><div class="box-lbl">تقييم الأمان الأولي</div><div class="box-val" style="font-size:12px;">{strength_status}</div></div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
             else: st.error("الرجاء إدخال نص أولاً.")
         st.markdown("</div>", unsafe_allow_html=True)
+
