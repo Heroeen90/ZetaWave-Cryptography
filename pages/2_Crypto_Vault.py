@@ -2,17 +2,16 @@ import streamlit as st
 import base64
 import re
 import numpy as np
-import pandas as pd
 import plotly.graph_objects as go
 
-# 1. إعدادات الصفحة
+# 1. إعدادات واجهة المنصة
 st.set_page_config(
     page_title="ZetaWave Crypto Vault Pro",
     page_icon="💻",
     layout="centered"
 )
 
-# 2. حقن الثيم البصري والبرمجي المتوافق مع الهوية البصرية للمنصة
+# 2. هندسة المظهر البصري لبيئة الـ SaaS
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;600&family=Space+Grotesk:wght=500;700&family=Cairo:wght=400;700&display=swap');
@@ -55,11 +54,13 @@ st.markdown("""
         color: #fef08a;
         margin-bottom: 15px;
         font-size: 14px;
+        text-align: right;
+        direction: rtl;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# ترويسة الصفحة والامان للمالك
+# ترويسة التطبيق السيبراني
 st.markdown("""
 <div class="vault-header">
     <div class="vault-title">💻 CRYPTO VAULT PRO</div>
@@ -67,6 +68,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# إدارة التحقق من الصلاحيات للمطور المالك
 if 'is_pro' not in st.session_state:
     st.session_state['is_pro'] = True
 
@@ -78,14 +80,14 @@ if st.session_state['is_pro']:
     </div>
     """, unsafe_allow_html=True)
 
-# 🛠️ شريط الخيارات المطور والمشترك بالكامل
+# 🛠️ شريط التنقل والأدوات الأفقي الموحد المشترك
 options = ["المحلل الذكي 🎛️", "السجل الحي 📜", "النطاق الكمي والمعاملات 📑", "مفكك الشفرات العام 🔓"]
 selected_option = st.radio("اختر الأداة المطلوبة من شريط التشغيل المنصّي:", options, index=0, horizontal=True)
 
 st.write("---")
 
 # =========================================================
-# 1️⃣ خيار: المحلل الذكي (التشفير ومفكك شفرات البرنامج الأصلي)
+# 1️⃣ قسم: المحلل الذكي (التشفير + مفكك شفرات المنصة الأصلي)
 # =========================================================
 if selected_option == "المحلل الذكي 🎛️":
     st.markdown("<h3 style='font-family: Cairo; font-size: 18px;'>🎛️ لوحة المحلل الذكي السيبراني</h3>", unsafe_allow_html=True)
@@ -120,45 +122,54 @@ if selected_option == "المحلل الذكي 🎛️":
             st.warning("الرجاء إدخال النص المشفر أولاً.")
 
 # =========================================================
-# 2️⃣ خيار: السجل الحي
+# 2️⃣ قسم: السجل الحي للعمليات
 # =========================================================
 elif selected_option == "السجل الحي 📜":
     st.markdown("<h3 style='font-family: Cairo; font-size: 18px;'>📜 السجل الحي للعمليات الكمية (Live Ledger)</h3>", unsafe_allow_html=True)
     st.code("""
-[INFO] 2026-05-21 01:15:00 - Quantum Key Generated successfully.
-[SECURE] 2026-05-21 01:16:11 - Handshake established with node ZW-992.
-[SUCCESS] 2026-05-21 01:17:02 - Zero-Knowledge Proof verified.
+[INFO] 2026-05-21 01:21:00 - Quantum Key Generated successfully.
+[SECURE] 2026-05-21 01:22:15 - Handshake established with node ZW-992.
+[SUCCESS] 2026-05-21 01:23:42 - Zero-Knowledge Proof verified.
     """, language="bash")
 
 # =========================================================
-# 3️⃣ خيار: النطاق الكمي والمعاملات (إعادة المحاكاة الرسومية ثلاثية الأبعاد والأوضاع بالكامل)
+# 3️⃣ قسم: النطاق الكمي والمعاملات (الحل الجذري النهائي والمطابق تماماً)
 # =========================================================
 elif selected_option == "النطاق الكمي والمعاملات 📑":
-    st.markdown("<p style='font-size: 16px; font-weight: bold; color: #f3f4f6;'>🔴 النطاق اللامتناهي (Quantum Infinity Mode) 🌌</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 16px; font-weight: bold; color: #f3f4f6;'>🔮 النطاق اللامتناهي (Quantum Infinity Mode) ♾️</p>", unsafe_allow_html=True)
     
-    # ⚡ صندوق الملاحظة والتحذير بلون الخردل/الأصفر المتطابق تماماً
+    # ⚡ صندوق الملاحظة المذهل بلونه وتنسيقه الأصلي المطابق تماماً لصورتك
     st.markdown("""
     <div class="infinity-alert">
         ⚡ <b>وضع اللانهاية نشط:</b> يتم حساب طيف التداخل كدالة تكاملية متصلة تمثل كافة الأصفار.
     </div>
     """, unsafe_allow_html=True)
     
-    # 🔑 حقل اختيار وإدخال عامل التغيير الديناميكي (Seed Factor) رقمي طويل
-    st.markdown("<p style='font-size: 14px; font-weight: bold;'>🔑 عامل التغيير الديناميكي (Seed Factor):</p>", unsafe_allow_html=True)
-    seed_factor = st.number_input("", value=767777664646466464646, step=1, format="%d")
+    # 🔑 حل المشكلة: حقل نصي ذكي يمنع الانهيار ويستقبل أرقاماً غير محدودة الأطوال كـ Seed Factor
+    st.markdown("<p style='font-size: 14px; font-weight: bold;'>🔑 🔑 عامل التغيير الديناميكي (Seed Factor):</p>", unsafe_allow_html=True)
+    seed_factor_str = st.text_input("", value="767777664646466464646")
     
-    # ⚠️ رسالة التنبيه العائمة المخصصة التي تحاكي لقطة شاشتك
-    if seed_factor > 999999:
-        st.warning("⚠️ يجب أن تكون القيمة أقل من أو تساوي 999999. (تم تفعيل التجاوز الفوق-أمني لوضع المالك تلقائياً)")
+    # تحويل آمن في الخلفية لمنع ثغرات المعالجة
+    try:
+        # إزالة الفراغات والتحقق من القيمة رقمياً
+        pure_numeric = int(''.join(filter(str.isdigit, seed_factor_str))) if seed_factor_str else 1
+    except ValueError:
+        pure_numeric = 1
+        
+    # 🚨 محاكاة التنبيه التحذيري البرتقالي الأيقوني الخاص بتطبيقك بشكل نقي وثابت
+    if len(seed_factor_str) > 6 or pure_numeric > 999999:
+        st.warning("⚠️ يجب أن تكون القيمة أقل من أو تساوي 999999. (تم تفعيل تجاوز الصلاحية الفوق-أمنية الحصري للمطور المالك)")
 
     st.write("---")
     st.markdown("<p style='font-size: 15px; font-weight: bold; color: #00ffcc;'>📊 بصمة التداخل الموجي الكمي ثلاثي الأبعاد:</p>", unsafe_allow_html=True)
     
-    # 📈 بناء وتوليد الرسم البياني السطحي ثلاثي الأبعاد (3D Surface) المتطابق في الألوان والتموجات
-    x = np.linspace(-5, 5, 60)
-    y = np.linspace(-5, 5, 60)
+    # 📈 توليد وهندسة السطح ثلاثي الأبعاد المتفاعل ديناميكياً مع المدخلات
+    x = np.linspace(-5, 5, 65)
+    y = np.linspace(-5, 5, 65)
     X, Y = np.meshgrid(x, y)
-    Z = np.sin(np.sqrt(X**2 + Y**2)) * np.cos(X) + 1.0  # دالة تموج تحاكي كثافة الموجة
+    
+    # دالة جيبية متقدمة لتمثيل تضاريس كثافة الموجة الكمية بدقة عالية
+    Z = np.sin(np.sqrt(X**2 + Y**2)) * np.cos(X * (pure_numeric % 5 + 1) * 0.1) + 1.0
     
     fig = go.Figure(data=[go.Surface(z=Z, x=X, y=Y, colorscale='Viridis')])
     
@@ -175,12 +186,11 @@ elif selected_option == "النطاق الكمي والمعاملات 📑":
     
     st.plotly_chart(fig, use_container_width=True)
     
-    # خيار إضافي لتأكيد الحقن
-    if st.button("🧬 ربط وحقن عامل التغيير في المفتاح الرئيسي للمنصة", use_container_width=True, type="primary"):
-        st.success(f"🔒 تم حقن البصمة الموجية المشتقة من العامل `{seed_factor}` بنجاح في نواة بروتوكول AES-256!")
+    if st.button("🧬 ربط وحقن عامل التغيير المخصص في المفتاح الرئيسي", use_container_width=True, type="primary"):
+        st.success("🔒 تم قفل خلايا النطاق وحقن البصمة المشتقة بنجاح في بروتوكولات الحماية الفوق-أمنية!")
 
 # =========================================================
-# 4️⃣ خيار: مفكك الشفرات العام
+# 4️⃣ قسم: مفكك الشفرات العام المدمج
 # =========================================================
 elif selected_option == "مفكك الشفرات العام 🔓":
     st.markdown("<h3 style='text-align: center; font-family: Cairo; color: #00ffcc; font-size: 20px;'>🔓 مفكك الشفرات العام الذكي (Universal Decoder)</h3>", unsafe_allow_html=True)
@@ -192,7 +202,7 @@ elif selected_option == "مفكك الشفرات العام 🔓":
         if input_text:
             text = input_text.strip()
             
-            # فحص وتفكيك النظام الثنائي (Binary)
+            # فحص النظام الثنائي (Binary)
             if re.match(r'^[01\s]+$', text) and len(text.replace(" ", "")) % 8 == 0:
                 try:
                     binary_pure = text.replace(" ", "")
@@ -201,7 +211,7 @@ elif selected_option == "مفكك الشفرات العام 🔓":
                 except Exception:
                     st.error("⚠️ فشلت خوارزمية فك ترميز النظام الثنائي المعتمد.")
                     
-            # فحص وتفكيك نظام Base64
+            # فحص نظام Base64
             elif re.match(r'^[A-Za-z0-9+/=\s]+$', text) and len(text.replace(" ", "")) % 4 == 0:
                 try:
                     decoded = base64.b64decode(text.encode('utf-8')).decode('utf-8', errors='ignore')
@@ -210,11 +220,11 @@ elif selected_option == "مفكك الشفرات العام 🔓":
                     st.error("⚠️ فشلت خوارزمية تحليل وفك ترميز مصفوفة Base64.")
             
             else:
-                st.info("🔒 **تحليل المنصة:** تم فحص البنية التركيبية للنص بنجاح. المؤشرات تدل على أن البيانات مشفرة عسكرياً عبر بروتوكولات حماية متطورة للغاية (AES-256 / Quantum Key). لفك شفرة هذا النص, يُرجى تزويد النظام بمفتاح ريمان الموجي الخاص بالجلسة.")
+                st.info("🔒 **تحليل المنصة:** تم فحص البنية التركيبية للنص بنجاح. المؤشرات تدل على أن البيانات مشفرة عسكرياً عبر بروتوكولات حماية متطورة للغاية (AES-256 / Quantum Key). لفك شفرة هذا النص، يُرجى تزويد النظام بمفتاح ريمان الموجي الخاص بالجلسة.")
         else:
             st.warning("⚠️ يرجى إدخال أي نص مشفر أو مرمّز في الحقل أعلاه أولاً لكي يتمكن النظام من تحليله.")
 
-# زر العودة
+# زر العودة للبوابة
 st.write("---")
 if st.button("🔙 العودة إلى البوابة الرئيسية للمنصة", use_container_width=True):
     st.switch_page("app.py")
