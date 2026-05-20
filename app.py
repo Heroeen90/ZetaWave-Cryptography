@@ -9,13 +9,16 @@ st.set_page_config(
     layout="centered"
 )
 
-# 🔑 ضع مفاتيح Stripe السرية والعلنية هنا (تأخذها من حسابك في Stripe Dashboard)
-# في البيئة الإنتاجية، يفضل وضعها في ملف .env أو st.secrets لحمايتها
-STRIPE_SECRET_KEY = "sk_test_..."  # المفتاح السري الخاص بك
-STRIPE_PUBLIC_KEY = "pk_test_..."  # المفتاح العلني الخاص بك
-PRICE_ID = "price_..."             # معرّف المنتج/السعر الذي ستنشئه في Stripe لوصف خطة الـ 29$
+# 🔑 المفاتيح العلنية ومعرف السعر (مدمجة داخل الكود لأنها آمنة للعلن)
+STRIPE_PUBLIC_KEY = "pk_test_51TZEozGVNwmCi5l2MezBS5P14YRe8Dc6uUIx8qW9mlxTrVpkOme9RbhQHnpzDymQ9ZMQZTN8oylDyJDyQoKPijIV00oT2DyBkC"
+PRICE_ID = "price_1O23XyYourActualPriceIDHere"  # ⚠️ تأكد من استبدال هذا بمعرف السعر الذي يبدأ بـ price_ من حسابك
 
-stripe.api_key = STRIPE_SECRET_KEY
+# 🔒 استدعاء المفتاح السري بأمان من خزنة Streamlit Secrets الحامية
+try:
+    STRIPE_SECRET_KEY = st.secrets["STRIPE_SECRET_KEY"]
+    stripe.api_key = STRIPE_SECRET_KEY
+except KeyError:
+    st.warning("⚠️ تحذير سيبراني: لم يتم ضبط المفتاح السري 'STRIPE_SECRET_KEY' في إعدادات المنصة بعد.")
 
 # حقن ثيم الـ SaaS الاحترافي المتوافق تماماً مع الموبايل
 st.markdown("""
@@ -143,7 +146,7 @@ st.markdown("""
     <div class="brand-glow">ZETAWAVE SUITE</div>
     <div class="hero-desc">المنصة السحابية الأولى لتأمين وتشفير البيانات الفوق-أمنية باستخدام خوارزميات ريمان الرياضية المتطورة وحصانة AES-256 العسكرية.</div>
 </div>
-<h2 style='text-align: center; font-family: Cairo; margin-bottom: 20px; font-size: 22px;'>🏷️ خططة الاشتراك السحابية الحالية</h2>
+<h2 style='text-align: center; font-family: Cairo; margin-bottom: 20px; font-size: 22px;'>🏷️ خطط الاشتراك السحابية الحالية</h2>
 """, unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
@@ -179,32 +182,28 @@ with col2:
         <hr style='border-color: rgba(0, 210, 255, 0.2); margin-bottom: 10px;'>
         <ul style='text-align: right; color: #bbb; font-size: 12px; font-family: Cairo; direction: rtl; padding-right: 15px; min-height: 110px;'>
             <li>✓ كل ميزات الباقة المجانية بالكامل</li>
-            <li>✓ تشفير مفتوح للملفات بجميع الأحجام</li>
+            <li>✓ تشفير مفتوح للمللفات بجميع الأحجام</li>
             <li>✓ الوصول الكامل لمحلل الشفرات الجنائي</li>
             <li>✓ وضع اللانهاية الكمي الفوق-أمن</li>
         </ul>
     </div>
     """, unsafe_allow_html=True)
     
-    # 💳 زر الدفع الحقيقي التفاعلي عبر Stripe
     if st.button("💳 اشتراك الآن عبر Stripe الآمن ⚡" if not st.session_state['is_pro'] else "✅ باقة الـ Pro مفعّلة لك بالكامل", use_container_width=True, type="primary", key="btn_pro_plan"):
         if not st.session_state['is_pro']:
             try:
                 with st.spinner("🔄 جاري إنشاء جلسة الدفع الآمنة..."):
-                    # إنشاء جلسة دفع في خوادم Stripe
                     checkout_session = stripe.checkout.Session.create(
                         payment_method_types=['card'],
                         line_items=[{
                             'price': PRICE_ID,
                             'quantity': 1,
                         }],
-                        mode='subscription', # أو 'payment' إذا كانت عملية شراء لمرة واحدة وليست اشتراكاً شهرياً
-                        success_url="https://ccu.streamlit.app/?session_id={CHECKOUT_SESSION_ID}", # رابط العودة في حال النجاح
-                        cancel_url="https://ccu.streamlit.app/", # رابط العودة في حال الإلغاء
+                        mode='subscription',
+                        success_url="https://ccu.streamlit.app/?session_id={CHECKOUT_SESSION_ID}",
+                        cancel_url="https://ccu.streamlit.app/",
                     )
-                    
-                    # توجيه المستخدم برابط جافاسكريبت خارجي آمن إلى صفحة دفع Stripe
-                    st.markdown(f'<meta http-serif="refresh" content="0; url={checkout_session.url}">', unsafe_allow_html=True)
+                    st.markdown(f'<meta http-equiv="refresh" content="0; url={checkout_session.url}">', unsafe_allow_html=True)
                     st.write(f"🔗 إذا لم يتم تحويلك تلقائياً، [اضغط هنا للدفع]({checkout_session.url})")
             except Exception as e:
                 st.error(f"❌ حدث خطأ أثناء الاتصال ببوابة Stripe: {e}")
