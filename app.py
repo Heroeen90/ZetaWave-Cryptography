@@ -1,4 +1,5 @@
 import streamlit as st
+import stripe
 import time
 
 # إعدادات الصفحة الرئيسية
@@ -7,6 +8,14 @@ st.set_page_config(
     page_icon="🛡️",
     layout="centered"
 )
+
+# 🔑 ضع مفاتيح Stripe السرية والعلنية هنا (تأخذها من حسابك في Stripe Dashboard)
+# في البيئة الإنتاجية، يفضل وضعها في ملف .env أو st.secrets لحمايتها
+STRIPE_SECRET_KEY = "sk_test_..."  # المفتاح السري الخاص بك
+STRIPE_PUBLIC_KEY = "pk_test_..."  # المفتاح العلني الخاص بك
+PRICE_ID = "price_..."             # معرّف المنتج/السعر الذي ستنشئه في Stripe لوصف خطة الـ 29$
+
+stripe.api_key = STRIPE_SECRET_KEY
 
 # حقن ثيم الـ SaaS الاحترافي المتوافق تماماً مع الموبايل
 st.markdown("""
@@ -43,6 +52,7 @@ st.markdown("""
         margin: 0 auto 25px auto;
         line-height: 1.6;
     }
+    
     .price-card {
         background: rgba(17, 24, 39, 0.45);
         backdrop-filter: blur(20px);
@@ -54,8 +64,8 @@ st.markdown("""
         margin-bottom: 15px;
     }
     .pro-card {
-        border-color: #00d2ff;
-        box-shadow: 0 0 25px rgba(0, 210, 255, 0.1);
+        border-color: rgba(0, 210, 255, 0.4);
+        box-shadow: 0 0 25px rgba(0, 210, 255, 0.05);
     }
     .badge {
         position: absolute;
@@ -87,9 +97,16 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# إدارة تهيئة الجلسة للمالك
+# إدارة تهيئة الجلسة للمالك والمحاكاة
 if 'is_pro' not in st.session_state:
     st.session_state['is_pro'] = True 
+
+# التقاط ما إذا كان العميل عائداً بعد الدفع الناجح عبر الروابط (Success URL)
+query_params = st.query_params
+if "session_id" in query_params:
+    st.session_state['is_pro'] = True
+    st.balloons()
+    st.success("🎉 شكراً لك! تم تأكيد عملية الدفع بنجاح وتفعيل الباقة الاحترافية.")
 
 # عرض لوحة التحكم الفورية بالحساب
 st.markdown("<h3 style='font-family: Cairo; text-align: center; font-size: 20px;'>💼 بوابة التحكم بالحساب الرقمي</h3>", unsafe_allow_html=True)
@@ -101,21 +118,20 @@ if st.session_state['is_pro']:
     </div>
     """, unsafe_allow_html=True)
     
-    # 🚀 الحل العبقري: زر الدخول الفوري للأدوات والمعاملات دون الحاجة للقائمة الجانبية
     if st.button("🔥 الدخول المباشر إلى لوحة أدوات التشفير والمعاملات 💻", use_container_width=True, type="primary"):
         st.switch_page("pages/2_Crypto_Vault.py")
         
-    if st.button("🔄 محاكاة حساب عميل مجاني (لاختبار القيود)", use_container_width=True):
+    if st.button("🔄 محاكاة حساب عميل مجاني (لاختبار الدفع الحقيقي)", use_container_width=True):
         st.session_state['is_pro'] = False
         st.rerun()
 else:
     st.markdown("""
-    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 16px; text-align: center; margin-bottom: 20px;">
-        <span style="color: #888; font-family: Cairo; font-size: 14px;">👤 وضع المحاكاة: أنت تتصفح الآن كـ (عميل مجاني محدود)</span>
+    <div style="background: rgba(255,150,0,0.07); border: 1px solid rgba(255,150,0,0.3); padding: 15px; border-radius: 16px; text-align: center; margin-bottom: 20px;">
+        <span style="color: #ff9600; font-family: Cairo; font-weight: bold; font-size: 14px;">👤 وضع المحاكاة نشط: أنت تتصفح الآن كـ (عميل مجاني محدود)</span>
     </div>
     """, unsafe_allow_html=True)
     
-    if st.button("⚡ العودة لوضع المالك الاحترافي المستمر (Pro)", use_container_width=True):
+    if st.button("⚡ إلغاء المحاكاة والعودة لوضع المالك الاحترافي (Pro)", use_container_width=True):
         st.session_state['is_pro'] = True
         st.rerun()
 
@@ -127,7 +143,7 @@ st.markdown("""
     <div class="brand-glow">ZETAWAVE SUITE</div>
     <div class="hero-desc">المنصة السحابية الأولى لتأمين وتشفير البيانات الفوق-أمنية باستخدام خوارزميات ريمان الرياضية المتطورة وحصانة AES-256 العسكرية.</div>
 </div>
-<h2 style='text-align: center; font-family: Cairo; margin-bottom: 20px; font-size: 22px;'>🏷️ خطط الاشتراك السحابية الحالية</h2>
+<h2 style='text-align: center; font-family: Cairo; margin-bottom: 20px; font-size: 22px;'>🏷️ خططة الاشتراك السحابية الحالية</h2>
 """, unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
@@ -139,7 +155,7 @@ with col1:
         <div class="price-val">$0 <span>/ شهرياً</span></div>
         <p style='color: #888; font-size: 13px; margin-bottom: 10px;'>تناسب الأفراد لتجربة التشفير البسيط</p>
         <hr style='border-color: rgba(255,255,255,0.05); margin-bottom: 10px;'>
-        <ul style='text-align: right; color: #bbb; font-size: 12px; font-family: Cairo; direction: rtl; padding-right: 15px; min-height: 100px;'>
+        <ul style='text-align: right; color: #bbb; font-size: 12px; font-family: Cairo; direction: rtl; padding-right: 15px; min-height: 110px;'>
             <li>✓ تشفير وفك تشفير النصوص السريّة</li>
             <li>✓ مفتاح موجي افتراضي متغير</li>
             <li>✗ تشفير الملفات الحقيقية مقفل</li>
@@ -147,6 +163,11 @@ with col1:
         </ul>
     </div>
     """, unsafe_allow_html=True)
+    
+    if st.button("🎯 أنت على هذه الباقة حالياً" if not st.session_state['is_pro'] else "🔄 تحويل الحساب للمجاني", use_container_width=True, key="btn_free_plan"):
+        if st.session_state['is_pro']:
+            st.session_state['is_pro'] = False
+            st.rerun()
 
 with col2:
     st.markdown("""
@@ -156,7 +177,7 @@ with col2:
         <div class="price-val">$29 <span>/ شهرياً</span></div>
         <p style='color: #888; font-size: 13px; margin-bottom: 10px;'>للشركات ومحترفي الأمن السيبراني</p>
         <hr style='border-color: rgba(0, 210, 255, 0.2); margin-bottom: 10px;'>
-        <ul style='text-align: right; color: #bbb; font-size: 12px; font-family: Cairo; direction: rtl; padding-right: 15px; min-height: 100px;'>
+        <ul style='text-align: right; color: #bbb; font-size: 12px; font-family: Cairo; direction: rtl; padding-right: 15px; min-height: 110px;'>
             <li>✓ كل ميزات الباقة المجانية بالكامل</li>
             <li>✓ تشفير مفتوح للملفات بجميع الأحجام</li>
             <li>✓ الوصول الكامل لمحلل الشفرات الجنائي</li>
@@ -164,4 +185,29 @@ with col2:
         </ul>
     </div>
     """, unsafe_allow_html=True)
+    
+    # 💳 زر الدفع الحقيقي التفاعلي عبر Stripe
+    if st.button("💳 اشتراك الآن عبر Stripe الآمن ⚡" if not st.session_state['is_pro'] else "✅ باقة الـ Pro مفعّلة لك بالكامل", use_container_width=True, type="primary", key="btn_pro_plan"):
+        if not st.session_state['is_pro']:
+            try:
+                with st.spinner("🔄 جاري إنشاء جلسة الدفع الآمنة..."):
+                    # إنشاء جلسة دفع في خوادم Stripe
+                    checkout_session = stripe.checkout.Session.create(
+                        payment_method_types=['card'],
+                        line_items=[{
+                            'price': PRICE_ID,
+                            'quantity': 1,
+                        }],
+                        mode='subscription', # أو 'payment' إذا كانت عملية شراء لمرة واحدة وليست اشتراكاً شهرياً
+                        success_url="https://ccu.streamlit.app/?session_id={CHECKOUT_SESSION_ID}", # رابط العودة في حال النجاح
+                        cancel_url="https://ccu.streamlit.app/", # رابط العودة في حال الإلغاء
+                    )
+                    
+                    # توجيه المستخدم برابط جافاسكريبت خارجي آمن إلى صفحة دفع Stripe
+                    st.markdown(f'<meta http-serif="refresh" content="0; url={checkout_session.url}">', unsafe_allow_html=True)
+                    st.write(f"🔗 إذا لم يتم تحويلك تلقائياً، [اضغط هنا للدفع]({checkout_session.url})")
+            except Exception as e:
+                st.error(f"❌ حدث خطأ أثناء الاتصال ببوابة Stripe: {e}")
+        else:
+            st.success("🌟 باقتك نشطة بالفعل! يمكنك الذهاب مباشرة لصفحة الأدوات والمعاملات.")
 
