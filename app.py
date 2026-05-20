@@ -9,9 +9,9 @@ st.set_page_config(
     layout="centered"
 )
 
-# 🔑 المفاتيح الحقيقية الخاصة بحسابك (تم دمجها بنجاح)
+# 🔑 المفاتيح الحقيقية الخاصة بحسابك
 STRIPE_PUBLIC_KEY = "pk_test_51TZEozGVNwmCi5l2MezBS5P14YRe8Dc6uUIx8qW9mlxTrVpkOme9RbhQHnpzDymQ9ZMQZTN8oylDyJDyQoKPijIV00oT2DyBkC"
-PRICE_ID = "price_1TZFBTGVNwmCi5l2y80elL0F"
+PRICE_ID = "price_1TZFBTGVNwmCi5l2y0elL0F"
 
 # 🔒 استدعاء المفتاح السري بأمان من خزنة Streamlit Secrets الحامية
 try:
@@ -99,6 +99,29 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
+# 📱 دالة جافا سكريبت لتفعيل وضع ملء الشاشة الكاملة كأنه تطبيق مستقل
+def trigger_fullscreen():
+    js_code = """
+    <script>
+        var doc = window.parent.document.documentElement;
+        if (!window.parent.document.fullscreenElement) {
+            doc.requestFullscreen().catch(err => {
+                alert(`خطأ أثناء تفعيل ملء الشاشة: ${err.message}`);
+            });
+        } else {
+            window.parent.document.exitFullscreen();
+        }
+    </script>
+    """
+    st.components.v1.html(js_code, height=0, width=0)
+
+# إضافة زر وضع التطبيق المستقل في أعلى الواجهة لسهولة الوصول
+st.markdown("<p style='text-align: center; color: #888; font-size: 12px; font-family: Cairo; margin-bottom: 2px;'>⚙️ تخصيص العرض</p>", unsafe_allow_html=True)
+if st.button("📱 تفعيل وضع التطبيق المستقل (ملء الشاشة الكاملة)", use_container_width=True):
+    trigger_fullscreen()
+
+st.write("---")
 
 # إدارة تهيئة الجلسة للمالك والمحاكاة
 if 'is_pro' not in st.session_state:
@@ -209,4 +232,3 @@ with col2:
                 st.error(f"❌ حدث خطأ أثناء الاتصال ببوابة Stripe: {e}")
         else:
             st.success("🌟 باقتك نشطة بالفعل! يمكنك الذهاب مباشرة لصفحة الأدوات والمعاملات.")
-
