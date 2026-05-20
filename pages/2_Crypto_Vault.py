@@ -11,7 +11,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. هندسة المظهر البصري لبيئة الـ SaaS
+# 2. هندسة المظهر البصري لبيئة الـ SaaS والتحكم بالأزرار
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;600&family=Space+Grotesk:wght=500;700&family=Cairo:wght=400;700&display=swap');
@@ -57,6 +57,11 @@ st.markdown("""
         text-align: right;
         direction: rtl;
     }
+    /* تحسين شكل صناديق الكود والنسخ لتكون واضحة ومريحة للعين */
+    div[data-testid="stCodeBlock"] {
+        border: 1px solid rgba(0, 255, 204, 0.2);
+        border-radius: 8px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -101,7 +106,9 @@ if selected_option == "المحلل الذكي 🎛️":
         if st.button("🔥 تشفير وحقن البيانات عسكرياً", use_container_width=True, type="primary"):
             if text_to_enc:
                 encoded_text = base64.b64encode(text_to_enc.encode('utf-8')).decode('utf-8')
-                st.success(f"🔒 تم التشفير بنجاح عبر بروتوكول ZetaGCM:\n\n`{encoded_text}`")
+                st.success("🔒 تم التشفير بنجاح عبر بروتوكول ZetaGCM:")
+                # 📋 تفعيل صندوق الكود المزود بزر Copy فوري للنص المشفر
+                st.code(encoded_text, language=None)
             else:
                 st.warning("الرجاء إدخال نص أولاً.")
     else:
@@ -115,7 +122,9 @@ if selected_option == "المحلل الذكي 🎛️":
         if text_to_dec_orig:
             try:
                 decoded_text_orig = base64.b64decode(text_to_dec_orig.encode('utf-8')).decode('utf-8')
-                st.success(f"🔓 تم فك التشفير بنجاح:\n\n{decoded_text_orig}")
+                st.success("🔓 تم فك التشفير بنجاح:")
+                # 📋 تفعيل صندوق الكود المزود بزر Copy فوري للنص المفكك الأصلي
+                st.code(decoded_text_orig, language=None)
             except Exception:
                 st.error("❌ عذراً، هذا النص لا يتوافق مع صيغة التشفير القياسية الخاصة بالبرنامج.")
         else:
@@ -133,57 +142,43 @@ elif selected_option == "السجل الحي 📜":
     """, language="bash")
 
 # =========================================================
-# 3️⃣ قسم: النطاق الكمي والمعاملات (الحل الجذري النهائي والمطابق تماماً)
+# 3️⃣ قسم: النطاق الكمي والمعاملات
 # =========================================================
 elif selected_option == "النطاق الكمي والمعاملات 📑":
     st.markdown("<p style='font-size: 16px; font-weight: bold; color: #f3f4f6;'>🔮 النطاق اللامتناهي (Quantum Infinity Mode) ♾️</p>", unsafe_allow_html=True)
     
-    # ⚡ صندوق الملاحظة المذهل بلونه وتنسيقه الأصلي المطابق تماماً لصورتك
     st.markdown("""
     <div class="infinity-alert">
         ⚡ <b>وضع اللانهاية نشط:</b> يتم حساب طيف التداخل كدالة تكاملية متصلة تمثل كافة الأصفار.
     </div>
     """, unsafe_allow_html=True)
     
-    # 🔑 حل المشكلة: حقل نصي ذكي يمنع الانهيار ويستقبل أرقاماً غير محدودة الأطوال كـ Seed Factor
-    st.markdown("<p style='font-size: 14px; font-weight: bold;'>🔑 🔑 عامل التغيير الديناميكي (Seed Factor):</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 14px; font-weight: bold;'>🔑 عامل التغيير الديناميكي (Seed Factor):</p>", unsafe_allow_html=True)
     seed_factor_str = st.text_input("", value="767777664646466464646")
     
-    # تحويل آمن في الخلفية لمنع ثغرات المعالجة
     try:
-        # إزالة الفراغات والتحقق من القيمة رقمياً
         pure_numeric = int(''.join(filter(str.isdigit, seed_factor_str))) if seed_factor_str else 1
     except ValueError:
         pure_numeric = 1
         
-    # 🚨 محاكاة التنبيه التحذيري البرتقالي الأيقوني الخاص بتطبيقك بشكل نقي وثابت
     if len(seed_factor_str) > 6 or pure_numeric > 999999:
         st.warning("⚠️ يجب أن تكون القيمة أقل من أو تساوي 999999. (تم تفعيل تجاوز الصلاحية الفوق-أمنية الحصري للمطور المالك)")
 
     st.write("---")
     st.markdown("<p style='font-size: 15px; font-weight: bold; color: #00ffcc;'>📊 بصمة التداخل الموجي الكمي ثلاثي الأبعاد:</p>", unsafe_allow_html=True)
     
-    # 📈 توليد وهندسة السطح ثلاثي الأبعاد المتفاعل ديناميكياً مع المدخلات
     x = np.linspace(-5, 5, 65)
     y = np.linspace(-5, 5, 65)
     X, Y = np.meshgrid(x, y)
-    
-    # دالة جيبية متقدمة لتمثيل تضاريس كثافة الموجة الكمية بدقة عالية
     Z = np.sin(np.sqrt(X**2 + Y**2)) * np.cos(X * (pure_numeric % 5 + 1) * 0.1) + 1.0
     
     fig = go.Figure(data=[go.Surface(z=Z, x=X, y=Y, colorscale='Viridis')])
-    
     fig.update_layout(
         title='كثافة الموجة',
-        scene=dict(
-            xaxis_title='X Matrix',
-            yaxis_title='Y Matrix',
-            zaxis_title='Zeta Spectrum'
-        ),
+        scene=dict(xaxis_title='X Matrix', yaxis_title='Y Matrix', zaxis_title='Zeta Spectrum'),
         margin=dict(l=0, r=0, b=0, t=40),
         height=450
     )
-    
     st.plotly_chart(fig, use_container_width=True)
     
     if st.button("🧬 ربط وحقن عامل التغيير المخصص في المفتاح الرئيسي", use_container_width=True, type="primary"):
@@ -196,36 +191,5 @@ elif selected_option == "مفكك الشفرات العام 🔓":
     st.markdown("<h3 style='text-align: center; font-family: Cairo; color: #00ffcc; font-size: 20px;'>🔓 مفكك الشفرات العام الذكي (Universal Decoder)</h3>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #aaa; font-size: 13px;'>يقوم هذا النظام بفحص وتحليل الشفرات والترميزات الخارجية تلقائياً واستخراج النصوص الأصلية منها فوراً.</p>", unsafe_allow_html=True)
     
-    input_text = st.text_area("📥 أدخل أو الصق النص المُراد تحليله وتفكيكه هنا (Binary, Base64...):", height=150)
-    
-    if st.button("🔍 ابدأ الفحص الجنائي والتفكيك الفوري", use_container_width=True, type="primary"):
-        if input_text:
-            text = input_text.strip()
-            
-            # فحص النظام الثنائي (Binary)
-            if re.match(r'^[01\s]+$', text) and len(text.replace(" ", "")) % 8 == 0:
-                try:
-                    binary_pure = text.replace(" ", "")
-                    chars = [chr(int(binary_pure[i:i+8], 2)) for i in range(0, len(binary_pure), 8)]
-                    st.success(f"📊 نتيجة التحليل الخوارزمي:\n\n🔹 **نوع التشفير:** النظام الثنائي (Binary Code)\n\n📝 **النص المفكك الأصلي:**\n`{''.join(chars)}`")
-                except Exception:
-                    st.error("⚠️ فشلت خوارزمية فك ترميز النظام الثنائي المعتمد.")
-                    
-            # فحص نظام Base64
-            elif re.match(r'^[A-Za-z0-9+/=\s]+$', text) and len(text.replace(" ", "")) % 4 == 0:
-                try:
-                    decoded = base64.b64decode(text.encode('utf-8')).decode('utf-8', errors='ignore')
-                    st.success(f"📊 نتيجة التحليل الخوارزمي:\n\n🔹 **نوع التشفير:** ترميز القاعدة 64 (Base64)\n\n📝 **النص المفكك الأصلي:**\n`{decoded}`")
-                except Exception:
-                    st.error("⚠️ فشلت خوارزمية تحليل وفك ترميز مصفوفة Base64.")
-            
-            else:
-                st.info("🔒 **تحليل المنصة:** تم فحص البنية التركيبية للنص بنجاح. المؤشرات تدل على أن البيانات مشفرة عسكرياً عبر بروتوكولات حماية متطورة للغاية (AES-256 / Quantum Key). لفك شفرة هذا النص، يُرجى تزويد النظام بمفتاح ريمان الموجي الخاص بالجلسة.")
-        else:
-            st.warning("⚠️ يرجى إدخال أي نص مشفر أو مرمّز في الحقل أعلاه أولاً لكي يتمكن النظام من تحليله.")
-
-# زر العودة للبوابة
-st.write("---")
-if st.button("🔙 العودة إلى البوابة الرئيسية للمنصة", use_container_width=True):
-    st.switch_page("app.py")
+    input_text = st.text_
 
