@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="ZetaWave Quantum Platform", page_icon="🛡️", layout="centered")
+st.set_page_config(page_title="ZetaWave Quantum Platform", page_icon="🛡️", layout="centered", initial_sidebar_state="expanded")
 
 # تنسيق مخصص
 st.markdown("""
