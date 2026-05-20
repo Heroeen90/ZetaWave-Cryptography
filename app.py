@@ -9,9 +9,9 @@ st.set_page_config(
     layout="centered"
 )
 
-# 🔑 المفاتيح العلنية ومعرف السعر (مدمجة داخل الكود لأنها آمنة للعلن)
+# 🔑 المفاتيح الحقيقية الخاصة بحسابك (تم دمجها بنجاح)
 STRIPE_PUBLIC_KEY = "pk_test_51TZEozGVNwmCi5l2MezBS5P14YRe8Dc6uUIx8qW9mlxTrVpkOme9RbhQHnpzDymQ9ZMQZTN8oylDyJDyQoKPijIV00oT2DyBkC"
-PRICE_ID = "price_1O23XyYourActualPriceIDHere"  # ⚠️ تأكد من استبدال هذا بمعرف السعر الذي يبدأ بـ price_ من حسابك
+PRICE_ID = "price_1TZFBTGVNwmCi5l2y80elL0F"
 
 # 🔒 استدعاء المفتاح السري بأمان من خزنة Streamlit Secrets الحامية
 try:
