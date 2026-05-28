@@ -123,19 +123,19 @@ selected_option = st.radio("اختر الأداة المطلوبة من شريط
 st.write("---")
 
 # =========================================================
-# 1️⃣ قسم: المحلل الذكي (تشفير النصوص وحقن الملفات والتطبيقات)
+# 1️⃣ قسم: المحلل الذكي (تشفير وفك تشفير النصوص والملفات)
 # =========================================================
 if selected_option == "المحلل الذكي 🎛️":
     st.markdown("<h3 style='font-family: Cairo; font-size: 18px;'>🎛️ لوحة المحلل الذكي السيبراني</h3>", unsafe_allow_html=True)
-    st.info("مصموفياً Zeta النظام يقوم الآن بحقن دالة ريمان لحماية قنوات الاتصال والبيانات والملفات المرفوعة.")
+    st.info("النظام يقوم بحقن دالة ريمان لحماية النصوص والملفات، أو فك حجبها بناءً على التزامن الحالي.")
     
-    # خيار تحديد الهدف المراد حمايته (نص أو ملف) ليعود كما كان تماماً
-    st.markdown("<p style='font-size: 15px; font-weight: bold; color: #00ffcc;'>🚀 تشفير المخرجات الفوق-أمني (Riemann Zeta Cipher):</p>", unsafe_allow_html=True)
-    target_type = st.radio("اختر الهدف المُراد حمايته بالتوليف الكمي:", ["نص سري للغاية", "(Pro) ملف أو تطبيق رقمي حقيقي"], horizontal=True)
+    # ------------------ قسم التشفير (حماية المدخلات) ------------------
+    st.markdown("<p style='font-size: 15px; font-weight: bold; color: #00ffcc; margin-bottom:5px;'>🚀 تشفير المخرجات الفوق-أمني (Riemann Zeta Encryption):</p>", unsafe_allow_html=True)
+    target_type = st.radio("اختر الهدف المُراد تشفيره بالتوليف الكمي:", ["نص سري للغاية", "(Pro) ملف أو تطبيق رقمي حقيقي"], horizontal=True, key="enc_target_radio")
     
     if target_type == "نص سري للغاية":
         text_to_enc = st.text_area("أدخل أو الصق المحتوى النصي هنا ليتم تشفيره بنواة ريمان:", key="riemann_enc_area")
-        if st.button("🔥 تشفير وحقن النص عبر نواة ريمان", use_container_width=True, type="primary"):
+        if st.button("🔥 تشفير وحقن النص عبر نواة ريمان", use_container_width=True, type="primary", key="btn_encrypt_text"):
             if text_to_enc and text_to_enc.strip():
                 raw_bytes = text_to_enc.strip().encode('utf-8')
                 encrypted_bytes = riemann_zeta_cipher(raw_bytes, st.session_state['global_seed_factor'], encrypt=True)
@@ -147,42 +147,70 @@ if selected_option == "المحلل الذكي 🎛️":
                 st.warning("الرجاء إدخال نص أولاً.")
                 
     else:
-        # 📂 عودة ميزة رفع وتأمين الملفات الكبيرة والتطبيقات الذكية
-        uploaded_file = st.file_uploader("قم بتحميل الملف الرقمي أو التطبيق (الحد الأقصى 5GB للمالك الحصري):", type=None)
+        uploaded_file = st.file_uploader("قم بتحميل الملف الرقمي أو التطبيق المراد تشفيره (الحد الأقصى 5GB):", type=None, key="uploader_enc")
         if uploaded_file is not None:
-            if st.button("🔥 تشفير وحقن الملف بالكامل بنواة ريمان", use_container_width=True, type="primary"):
+            if st.button("🔥 تشفير وحقن الملف بالكامل بنواة ريمان", use_container_width=True, type="primary", key="btn_encrypt_file"):
                 with st.spinner("جاري معالجة بايتات الملف وحقن طيف ريمان..."):
                     file_bytes = uploaded_file.read()
                     enc_file_bytes = riemann_zeta_cipher(file_bytes, st.session_state['global_seed_factor'], encrypt=True)
                     if enc_file_bytes:
-                        st.success(f"🔒 تم تشفير وتأمين التطبيق/الملف ({uploaded_file.name}) بحصانة ريمان الفوق-أمنية!")
-                        # تمكين المالك من تحميل الملف المشفر فوراً لإرساله بأمان
+                        st.success(f"🔒 تم تشفير وتأمين الملف ({uploaded_file.name}) بحصانة ريمان!")
                         st.download_button(
                             label="📥 تحميل الملف المشفر بأمان الآن",
                             data=enc_file_bytes,
                             file_name=f"Encrypted_{uploaded_file.name}",
                             mime="application/octet-stream",
-                            use_container_width=True
+                            use_container_width=True,
+                            key="btn_download_enc_file"
                         )
 
     st.write("---")
     
-    st.markdown("<p style='font-size: 15px; font-weight: bold; color: #0077ff;'>🔓 مفكك الشفرات المتزامن مع حدسية ريمان (Zetawave Decoder):</p>", unsafe_allow_html=True)
-    text_to_dec_orig = st.text_area("أدخل النص المشفر المتوافق مع طيف ريمان الحالي لاسترجاعه:", key="riemann_dec_area")
-    if st.button("🔓 بدء فك التشفير المزامن المتصل", use_container_width=True):
-        if text_to_dec_orig and text_to_dec_orig.strip():
-            try:
-                b64_decoded = base64.b64decode(text_to_dec_orig.strip().encode('utf-8'))
-                decrypted_bytes = riemann_zeta_cipher(b64_decoded, st.session_state['global_seed_factor'], encrypt=False)
-                if decrypted_bytes:
-                    st.success("🔓 تم فك الشفرة واستعادة النص الأصلي بنجاح بعد مطابقة طيف ريمان:")
-                    st.code(decrypted_bytes.decode('utf-8'), language=None)
-                else:
-                    st.error("❌ فشل فك التشفير! المفتاح غير مطابق أو تم التلاعب ببنية الكود الموجي.")
-            except Exception:
-                st.error("❌ فشل معالجة الشفرة المدخلة، تأكد من سلامة بنيتها التركيبية.")
-        else:
-            st.warning("الرجاء إدخال النص المشفر أولاً.")
+    # ------------------ قسم فك التشفير (استرجاع المدخلات) ------------------
+    st.markdown("<p style='font-size: 15px; font-weight: bold; color: #0077ff; margin-bottom:5px;'>🔓 مفكك الشفرات المتزامن مع حدسية ريمان (Zetawave Decoder):</p>", unsafe_allow_html=True)
+    dec_target_type = st.radio("اختر نوع الهدف المُراد فك تشفيره واسترجاعه:", ["فك تشفير نص مخفي", "فك تشفير ملف / تطبيق مرفوع"], horizontal=True, key="dec_target_radio")
+    
+    if dec_target_type == "فك تشفير نص مخفي":
+        text_to_dec_orig = st.text_area("أدخل النص المشفر المتوافق مع طيف ريمان الحالي لاسترجاعه:", key="riemann_dec_area")
+        if st.button("🔓 بدء فك التشفير المزامن للنصوص", use_container_width=True, key="btn_decrypt_text"):
+            if text_to_dec_orig and text_to_dec_orig.strip():
+                try:
+                    b64_decoded = base64.b64decode(text_to_dec_orig.strip().encode('utf-8'))
+                    decrypted_bytes = riemann_zeta_cipher(b64_decoded, st.session_state['global_seed_factor'], encrypt=False)
+                    if decrypted_bytes:
+                        st.success("🔓 تم فك الشفرة واستعادة النص الأصلي بنجاح:")
+                        st.code(decrypted_bytes.decode('utf-8'), language=None)
+                    else:
+                        st.error("❌ فشل فك التشفير! المفتاح (Seed) غير مطابق.")
+                except Exception:
+                    st.error("❌ فشل معالجة الشفرة المدخلة، تأكد من سلامة بنيتها التركيبية.")
+            else:
+                st.warning("الرجاء إدخال النص المشفر أولاً.")
+                
+    else:
+        # 📂 الميزة الجديدة المضافة: حقل استقبال ورفع الملفات والتطبيقات المشفرة لإعادتها لأصلها
+        uploaded_enc_file = st.file_uploader("قم برفع الملف المشفر (`Encrypted_...`) لإعادة فكه وتوليفه:", type=None, key="uploader_dec")
+        if uploaded_enc_file is not None:
+            if st.button("🔓 فك تشفير واسترجاع الملف الأصلي", use_container_width=True, type="primary", key="btn_decrypt_file"):
+                with st.spinner("جاري قراءة طيف الملف وعكس قناع ريمان الرياضي..."):
+                    enc_file_bytes = uploaded_enc_file.read()
+                    # عكس عملية التشكيل الموجي
+                    decrypted_file_bytes = riemann_zeta_cipher(enc_file_bytes, st.session_state['global_seed_factor'], encrypt=False)
+                    
+                    if decrypted_file_bytes:
+                        # تنظيف اسم الملف المسترجع برمجياً
+                        clean_name = uploaded_enc_file.name.replace("Encrypted_", "")
+                        st.success(f"🔓 تم فك حجب الحماية بنجاح! السلسلة متطابقة مع النواة الحالية.")
+                        st.download_button(
+                            label="📥 تحميل الملف المسترجع بأصله الحقيقي الآن",
+                            data=decrypted_file_bytes,
+                            file_name=f"Decrypted_{clean_name}",
+                            mime="application/octet-stream",
+                            use_container_width=True,
+                            key="btn_download_dec_file"
+                        )
+                    else:
+                        st.error("❌ فشل استرجاع الملف! طيف ريمان المولد من الـ Seed الحالي لا يتطابق مع بصمة هذا الملف.")
 
 # =========================================================
 # 2️⃣ قسم: السجل الحي للعمليات
@@ -209,7 +237,7 @@ elif selected_option == "النطاق الكمي والمعاملات 📑":
     
     st.markdown("<p style='font-size: 14px; font-weight: bold;'>🔑 عامل التغيير الديناميكي المتحكم بالتشفير (Seed Factor):</p>", unsafe_allow_html=True)
     
-    new_seed = st.text_input("أدخل المفتاح الرقمي المخصص للحماية (Seed):", value=st.session_state['global_seed_factor'])
+    new_seed = st.text_input("أدخل المفتاح الرقمي المخصص للحماية (Seed):", value=st.session_state['global_seed_factor'], key="seed_input_field")
     if new_seed:
         st.session_state['global_seed_factor'] = new_seed
     
@@ -247,7 +275,7 @@ elif selected_option == "مفكك الشفرات العام 🔓":
     
     input_text = st.text_area("📥 أدخل أو الصق النص المُراد تحليله وتفكيكه هنا:", height=150, key="universal_input_area")
     
-    if st.button("🔍 ابدأ الفحص الجنائي والتفكيك الفوري", use_container_width=True, type="primary"):
+    if st.button("🔍 ابدأ الفحص الجنائي والتفكيك الفوري", use_container_width=True, type="primary", key="btn_universal_decode"):
         if input_text and input_text.strip():
             text = input_text.strip()
             try:
@@ -263,6 +291,6 @@ elif selected_option == "مفكك الشفرات العام 🔓":
 
 # زر العودة للبوابة
 st.write("---")
-if st.button("🔙 العودة إلى البوابة الرئيسية للمنصة", use_container_width=True):
+if st.button("🔙 العودة إلى البوابة الرئيسية للمنصة", use_container_width=True, key="btn_back_to_main"):
     st.switch_page("app.py")
 
