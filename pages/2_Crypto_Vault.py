@@ -106,7 +106,7 @@ if 'is_pro' not in st.session_state:
     st.session_state['is_pro'] = True
 
 if 'global_seed_factor' not in st.session_state:
-    st.session_state['global_seed_factor'] = "767777664646466464646"
+    st.session_state['global_seed_factor'] = "01"
 
 if st.session_state['is_pro']:
     st.markdown(f"""
