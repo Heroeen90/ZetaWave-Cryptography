@@ -1,5 +1,6 @@
 import streamlit as st
 import base64
+import re
 import numpy as np
 import plotly.graph_objects as go
 
@@ -10,54 +11,37 @@ st.set_page_config(
     layout="centered"
 )
 
-# 🧠 النواة الرياضية المحصنة لحدسية ريمان (مستقرة ولا تسبب الفشل العشوائي)
-def riemann_zeta_cipher(text, seed_str, encrypt=True):
+# 🧠 النواة الرياضية المحصنة لحدسية ريمان لمعالجة بايتات النصوص أو بايتات الملفات
+def riemann_zeta_cipher(input_bytes, seed_str, encrypt=True):
     try:
-        if not text:
-            return ""
+        if not input_bytes:
+            return b""
             
-        # 1. معالجة وتأمين الـ Seed Factor ديناميكياً
+        # معالجة وتأمين الـ Seed Factor ديناميكياً
         safe_seed = str(seed_str) if seed_str else "767777664646466464646"
         seed_digits = [int(d) for d in safe_seed if d.isdigit()]
         seed_sum = sum(seed_digits) if seed_digits else 7
         
-        # 2. حقن نقطة الصفر غير التافه الأول لحدسية ريمان (14.134725) لضبط التردد الحرج
+        # حقن نقطة الصفر غير التافه الأول لحدسية ريمان (14.134725) لضبط التردد الحرج
         t_base = (seed_sum % 50) + 14.134725
         
-        if encrypt:
-            # تحويل النص الأصلي إلى بايتات UTF-8 نقية لتأمين الحروف العربية
-            input_bytes = text.encode('utf-8')
-            n = len(input_bytes)
-            x_steps = np.linspace(1, n + 1, n)
-            
-            # توليد طيف تداخل الموجات الجيبية التابع لدالة زيثا
-            zeta_wave = np.sin(t_base * np.log(x_steps + 1)) + np.cos((t_base + seed_sum) * x_steps * 0.1)
-            
-            # تحويل الطيف إلى قناع بايتات مضبوط ومقيد حركياً (بين 1 و 255)
-            quantum_mask = [int(abs(w) * 1000) % 254 + 1 for w in zeta_wave]
-            
-            # تشفير بايتات النص عبر مصفوفة ريمان المشتقة
-            encrypted_bytes = bytes([input_bytes[i] ^ quantum_mask[i] for i in range(n)])
-            return base64.b64encode(encrypted_bytes).decode('utf-8')
-        else:
-            # فك التشفير العكسي
-            cipher_bytes = base64.b64decode(text.encode('utf-8'))
-            n = len(cipher_bytes)
-            x_steps = np.linspace(1, n + 1, n)
-            
-            # إعادة بناء نفس الطيف الموجي بنفس المعطيات بدقة متناهية
-            zeta_wave = np.sin(t_base * np.log(x_steps + 1)) + np.cos((t_base + seed_sum) * x_steps * 0.1)
-            quantum_mask = [int(abs(w) * 1000) % 254 + 1 for w in zeta_wave]
-            
-            # عكس معالجة القناع الرياضي لاستعادة البايتات الأصلية
-            decrypted_bytes = bytes([cipher_bytes[i] ^ quantum_mask[i] for i in range(n)])
-            return decrypted_bytes.decode('utf-8')
+        n = len(input_bytes)
+        x_steps = np.linspace(1, n + 1, n)
+        
+        # توليد طيف تداخل الموجات الجيبية التابع لدالة زيثا
+        zeta_wave = np.sin(t_base * np.log(x_steps + 1)) + np.cos((t_base + seed_sum) * x_steps * 0.1)
+        
+        # تحويل الطيف إلى قناع بايتات مضبوط ومقيد حركياً (بين 1 و 255)
+        quantum_mask = [int(abs(w) * 1000) % 254 + 1 for w in zeta_wave]
+        
+        # تشفير أو فك تشفير البايتات عبر مصفوفة ريمان المشتقة (XOR)
+        processed_bytes = bytes([input_bytes[i] ^ quantum_mask[i] for i in range(n)])
+        return processed_bytes
             
     except Exception:
-        # حماية النواة الذكية: إذا كان الـ Seed خطأ، يعود الكود برسالة أمان تنبيهية واضحة
-        return "❌ فشل فك التشفير: طيف مفتاح ريمان الحالي غير متطابق مع الشفرة!"
+        return b""
 
-# 2. هندسة المظهر البصري لبيئة الـ SaaS
+# 2. هندسة المظهر البصري لبيئة الـ SaaS والتحكم بالأزرار
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;600&family=Space+Grotesk:wght=500;700&family=Cairo:wght=400;700&display=swap');
@@ -122,7 +106,7 @@ if 'is_pro' not in st.session_state:
     st.session_state['is_pro'] = True
 
 if 'global_seed_factor' not in st.session_state:
-    st.session_state['global_seed_factor'] = "1"
+    st.session_state['global_seed_factor'] = "767777664646466464646"
 
 if st.session_state['is_pro']:
     st.markdown(f"""
@@ -139,22 +123,47 @@ selected_option = st.radio("اختر الأداة المطلوبة من شريط
 st.write("---")
 
 # =========================================================
-# 1️⃣ قسم: المحلل الذكي (تشفير وفك تشفير ريمان الحقيقي والمستقر)
+# 1️⃣ قسم: المحلل الذكي (تشفير النصوص وحقن الملفات والتطبيقات)
 # =========================================================
 if selected_option == "المحلل الذكي 🎛️":
     st.markdown("<h3 style='font-family: Cairo; font-size: 18px;'>🎛️ لوحة المحلل الذكي السيبراني</h3>", unsafe_allow_html=True)
-    st.info("النظام يقوم الآن بحقن دالة ريمان Zeta مصفوفياً لحماية قنوات الاتصال والبيانات.")
+    st.info("مصموفياً Zeta النظام يقوم الآن بحقن دالة ريمان لحماية قنوات الاتصال والبيانات والملفات المرفوعة.")
     
+    # خيار تحديد الهدف المراد حمايته (نص أو ملف) ليعود كما كان تماماً
     st.markdown("<p style='font-size: 15px; font-weight: bold; color: #00ffcc;'>🚀 تشفير المخرجات الفوق-أمني (Riemann Zeta Cipher):</p>", unsafe_allow_html=True)
-    text_to_enc = st.text_area("أدخل أو الصق المحتوى النصي هنا ليتم تشفيره بنواة ريمان:", key="riemann_enc_area")
+    target_type = st.radio("اختر الهدف المُراد حمايته بالتوليف الكمي:", ["نص سري للغاية", "(Pro) ملف أو تطبيق رقمي حقيقي"], horizontal=True)
     
-    if st.button("🔥 تشفير وحقن البيانات عبر نواة ريمان", use_container_width=True, type="primary"):
-        if text_to_enc and text_to_enc.strip():
-            encrypted_res = riemann_zeta_cipher(text_to_enc.strip(), st.session_state['global_seed_factor'], encrypt=True)
-            st.success("🔒 تم التشفير بنجاح (مستحيل الفك الخارجي أو العشوائي بدون الـ Seed):")
-            st.code(encrypted_res, language=None)
-        else:
-            st.warning("الرجاء إدخال نص أولاً.")
+    if target_type == "نص سري للغاية":
+        text_to_enc = st.text_area("أدخل أو الصق المحتوى النصي هنا ليتم تشفيره بنواة ريمان:", key="riemann_enc_area")
+        if st.button("🔥 تشفير وحقن النص عبر نواة ريمان", use_container_width=True, type="primary"):
+            if text_to_enc and text_to_enc.strip():
+                raw_bytes = text_to_enc.strip().encode('utf-8')
+                encrypted_bytes = riemann_zeta_cipher(raw_bytes, st.session_state['global_seed_factor'], encrypt=True)
+                if encrypted_bytes:
+                    final_b64 = base64.b64encode(encrypted_bytes).decode('utf-8')
+                    st.success("🔒 تم تشفير النص بنجاح (محمي بالكامل بقناع أصفار ريمان):")
+                    st.code(final_b64, language=None)
+            else:
+                st.warning("الرجاء إدخال نص أولاً.")
+                
+    else:
+        # 📂 عودة ميزة رفع وتأمين الملفات الكبيرة والتطبيقات الذكية
+        uploaded_file = st.file_uploader("قم بتحميل الملف الرقمي أو التطبيق (الحد الأقصى 5GB للمالك الحصري):", type=None)
+        if uploaded_file is not None:
+            if st.button("🔥 تشفير وحقن الملف بالكامل بنواة ريمان", use_container_width=True, type="primary"):
+                with st.spinner("جاري معالجة بايتات الملف وحقن طيف ريمان..."):
+                    file_bytes = uploaded_file.read()
+                    enc_file_bytes = riemann_zeta_cipher(file_bytes, st.session_state['global_seed_factor'], encrypt=True)
+                    if enc_file_bytes:
+                        st.success(f"🔒 تم تشفير وتأمين التطبيق/الملف ({uploaded_file.name}) بحصانة ريمان الفوق-أمنية!")
+                        # تمكين المالك من تحميل الملف المشفر فوراً لإرساله بأمان
+                        st.download_button(
+                            label="📥 تحميل الملف المشفر بأمان الآن",
+                            data=enc_file_bytes,
+                            file_name=f"Encrypted_{uploaded_file.name}",
+                            mime="application/octet-stream",
+                            use_container_width=True
+                        )
 
     st.write("---")
     
@@ -162,12 +171,16 @@ if selected_option == "المحلل الذكي 🎛️":
     text_to_dec_orig = st.text_area("أدخل النص المشفر المتوافق مع طيف ريمان الحالي لاسترجاعه:", key="riemann_dec_area")
     if st.button("🔓 بدء فك التشفير المزامن المتصل", use_container_width=True):
         if text_to_dec_orig and text_to_dec_orig.strip():
-            decoded_res = riemann_zeta_cipher(text_to_dec_orig.strip(), st.session_state['global_seed_factor'], encrypt=False)
-            if "فشل فك التشفير" in decoded_res:
-                st.error(decoded_res)
-            else:
-                st.success("🔓 تم فك الشفرة واستعادة النص الأصلي بنجاح بعد مطابقة طيف ريمان:")
-                st.code(decoded_res, language=None)
+            try:
+                b64_decoded = base64.b64decode(text_to_dec_orig.strip().encode('utf-8'))
+                decrypted_bytes = riemann_zeta_cipher(b64_decoded, st.session_state['global_seed_factor'], encrypt=False)
+                if decrypted_bytes:
+                    st.success("🔓 تم فك الشفرة واستعادة النص الأصلي بنجاح بعد مطابقة طيف ريمان:")
+                    st.code(decrypted_bytes.decode('utf-8'), language=None)
+                else:
+                    st.error("❌ فشل فك التشفير! المفتاح غير مطابق أو تم التلاعب ببنية الكود الموجي.")
+            except Exception:
+                st.error("❌ فشل معالجة الشفرة المدخلة، تأكد من سلامة بنيتها التركيبية.")
         else:
             st.warning("الرجاء إدخال النص المشفر أولاً.")
 
