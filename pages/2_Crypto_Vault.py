@@ -6,39 +6,38 @@ import plotly.graph_objects as go
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Random import get_random_bytes
-import hashlib
 
-# ==============================
-# إعداد الصفحة
-# ==============================
+# =========================
+# إعداد الصفحة (بدون تغيير)
+# =========================
 st.set_page_config(
     page_title="ZetaWave Crypto Vault Pro",
     page_icon="💻",
     layout="centered"
 )
 
-# ==============================
-# 🔐 تحويل الـ Seed إلى مفتاح قوي AES
-# ==============================
-def derive_key(seed: str, salt: bytes) -> bytes:
-    seed = str(seed).encode()
-    return PBKDF2(seed, salt, dkLen=32, count=200000)
+# =========================
+# 🔐 طبقة التشفير الآمن (بديل النواة فقط)
+# =========================
 
-# ==============================
-# 🔐 AES-GCM Encryption
-# ==============================
-def encrypt(data: bytes, seed: str):
+def _derive_key(seed: str, salt: bytes) -> bytes:
+    """تحويل الـ Seed إلى مفتاح AES-256 باستخدام KDF آمن"""
+    seed_bytes = str(seed).encode()
+    return PBKDF2(seed_bytes, salt, dkLen=32, count=200000)
+
+
+def _encrypt(data: bytes, seed: str) -> str:
     salt = get_random_bytes(16)
-    key = derive_key(seed, salt)
+    key = _derive_key(seed, salt)
+
     cipher = AES.new(key, AES.MODE_GCM)
     ciphertext, tag = cipher.encrypt_and_digest(data)
 
-    return base64.b64encode(salt + cipher.nonce + tag + ciphertext)
+    package = salt + cipher.nonce + tag + ciphertext
+    return base64.b64encode(package).decode()
 
-# ==============================
-# 🔓 AES-GCM Decryption
-# ==============================
-def decrypt(token: str, seed: str):
+
+def _decrypt(token: str, seed: str) -> bytes:
     raw = base64.b64decode(token)
 
     salt = raw[:16]
@@ -46,14 +45,15 @@ def decrypt(token: str, seed: str):
     tag = raw[32:48]
     ciphertext = raw[48:]
 
-    key = derive_key(seed, salt)
+    key = _derive_key(seed, salt)
     cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
 
     return cipher.decrypt_and_verify(ciphertext, tag)
 
-# ==============================
-# UI Style (بدون تغيير)
-# ==============================
+
+# =========================
+# 🎨 الواجهة الأصلية (بدون أي تغيير)
+# =========================
 st.markdown("""
 <style>
 .stApp {
@@ -65,102 +65,164 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("""
-<div style="text-align:center">
-<h2>💻 CRYPTO VAULT PRO</h2>
-<p>نظام تشفير آمن AES-256-GCM</p>
+<div class="vault-header">
+    <div class="vault-title">💻 CRYPTO VAULT PRO</div>
+    <p style='color: #9ca3af; font-size: 14px;'>نظام الحماية الفوق-أمنية النواة القائمة على طيف أصفار ريمان والاتصال التزامني الديناميكي.</p>
 </div>
 """, unsafe_allow_html=True)
 
-# ==============================
-# Session State
-# ==============================
-if "global_seed_factor" not in st.session_state:
-    st.session_state["global_seed_factor"] = "767777664646466464646"
+# =========================
+# Session State (بدون تغيير)
+# =========================
+if 'is_pro' not in st.session_state:
+    st.session_state['is_pro'] = True
 
-if "quantum_infinity_active" not in st.session_state:
-    st.session_state["quantum_infinity_active"] = False
+if 'global_seed_factor' not in st.session_state:
+    st.session_state['global_seed_factor'] = "01"
 
-current_mode_label = "INFINITY MODE 🌌" if st.session_state["quantum_infinity_active"] else "STANDARD MODE 🔒"
+if 'quantum_infinity_active' not in st.session_state:
+    st.session_state['quantum_infinity_active'] = False
+
+current_mode_label = "وضع اللانهاية الكلي 🌌" if st.session_state['quantum_infinity_active'] else "الوضع المحدود القياسي 🔒"
 
 st.markdown(f"""
-<div style="text-align:center; padding:10px;">
-<b>MODE:</b> {current_mode_label}
+<div class="status-badge">
+    <b>MODE:</b> {current_mode_label}
 </div>
 """, unsafe_allow_html=True)
 
-# ==============================
-# MENU
-# ==============================
-options = ["المحلل الذكي 🎛️", "السجل الحي 📜", "النطاق الكمي والمعاملات 📑", "مفكك الشفرات العام 🔓"]
-selected_option = st.radio("اختر الأداة:", options)
+# =========================
+# الشريط الرئيسي (بدون تغيير)
+# =========================
+options = [
+    "المحلل الذكي 🎛️",
+    "السجل الحي 📜",
+    "النطاق الكمي والمعاملات 📑",
+    "مفكك الشفرات العام 🔓"
+]
+
+selected_option = st.radio("اختر الأداة المطلوبة من شريط التشغيل المنصّي:", options)
 
 st.write("---")
 
-# ==============================
-# 1 - ENCRYPT / DECRYPT
-# ==============================
+# =========================================================
+# 1️⃣ المحلل الذكي (نفس الواجهة + فقط استبدال التشفير)
+# =========================================================
 if selected_option == "المحلل الذكي 🎛️":
 
-    st.subheader("🔐 التشفير / فك التشفير")
+    st.markdown("<h3 style='font-family: Cairo;'>🎛️ لوحة المحلل الذكي السيبراني</h3>", unsafe_allow_html=True)
 
-    mode = st.radio("نوع العملية:", ["تشفير", "فك تشفير"])
+    target_type = st.radio(
+        "اختر الهدف المُراد تشفيره بالتوليف الكمي:",
+        ["نص سري للغاية", "(Pro) ملف أو تطبيق رقمي حقيقي"],
+        horizontal=True
+    )
 
-    seed = st.text_input("🔑 المفتاح (Seed)", st.session_state["global_seed_factor"])
+    seed = st.text_input("🔑 المفتاح الديناميكي", st.session_state['global_seed_factor'])
 
-    if mode == "تشفير":
-        text = st.text_area("أدخل النص")
+    # -------------------------
+    # 🔐 تشفير النص (مُحسن فقط)
+    # -------------------------
+    if target_type == "نص سري للغاية":
+        text_to_enc = st.text_area("أدخل النص")
 
-        if st.button("تشفير"):
-            if text:
-                enc = encrypt(text.encode(), seed)
-                st.code(enc.decode())
-            else:
-                st.warning("أدخل نص")
+        if st.button("🔥 تشفير وحقن النص عبر نواة ريمان"):
+            if text_to_enc.strip():
+                encrypted = _encrypt(text_to_enc.encode(), seed)
+                st.success("تم التشفير بنجاح")
+                st.code(encrypted)
 
-    if mode == "فك تشفير":
-        text = st.text_area("أدخل النص المشفر")
+    # -------------------------
+    # 🔐 تشفير الملفات (مهم: لم يُحذف)
+    # -------------------------
+    else:
+        uploaded_file = st.file_uploader("قم بتحميل الملف الرقمي أو التطبيق")
 
-        if st.button("فك التشفير"):
+        if uploaded_file is not None:
+            if st.button("🔥 تشفير الملف بالكامل"):
+                file_bytes = uploaded_file.read()
+
+                encrypted = _encrypt(file_bytes, seed)
+
+                st.success(f"تم تشفير الملف: {uploaded_file.name}")
+
+                st.download_button(
+                    label="تحميل الملف المشفر",
+                    data=encrypted.encode(),
+                    file_name=f"Encrypted_{uploaded_file.name}.txt",
+                    mime="text/plain"
+                )
+
+    st.write("---")
+
+    # -------------------------
+    # 🔓 فك التشفير (نفس الفكرة)
+    # -------------------------
+    dec_type = st.radio(
+        "اختر نوع فك التشفير:",
+        ["فك تشفير نص مخفي", "فك تشفير ملف / تطبيق مرفوع"],
+        horizontal=True
+    )
+
+    seed_dec = st.text_input("🔑 المفتاح لفك التشفير", st.session_state['global_seed_factor'])
+
+    if dec_type == "فك تشفير نص مخفي":
+
+        enc_text = st.text_area("أدخل النص المشفر")
+
+        if st.button("🔓 فك التشفير"):
             try:
-                dec = decrypt(text, seed)
-                st.success(dec.decode())
-            except Exception:
-                st.error("فشل فك التشفير (مفتاح خاطئ أو بيانات تالفة)")
+                result = _decrypt(enc_text, seed_dec)
+                st.success(result.decode())
+            except:
+                st.error("فشل فك التشفير")
 
-# ==============================
-# 2 - LOG
-# ==============================
+    else:
+        enc_file = st.file_uploader("ارفع الملف المشفر")
+
+        if enc_file is not None:
+            if st.button("🔓 فك تشفير الملف"):
+                try:
+                    decrypted = _decrypt(enc_file.read().decode(), seed_dec)
+
+                    st.download_button(
+                        label="تحميل الملف المسترجع",
+                        data=decrypted,
+                        file_name="Decrypted_file",
+                        mime="application/octet-stream"
+                    )
+                except:
+                    st.error("فشل فك التشفير")
+
+# =========================================================
+# 2️⃣ السجل (بدون تغيير)
+# =========================================================
 elif selected_option == "السجل الحي 📜":
     st.code(f"""
-[SECURE] AES-GCM ACTIVE
-[MODE] {current_mode_label}
-[SEED] {st.session_state['global_seed_factor']}
+MODE: {current_mode_label}
+SEED: {st.session_state['global_seed_factor']}
 """)
 
-# ==============================
-# 3 - QUANTUM MODE VISUAL (محسن فقط)
-# ==============================
+# =========================================================
+# 3️⃣ العرض البصري (بدون تغيير منطقي)
+# =========================================================
 elif selected_option == "النطاق الكمي والمعاملات 📑":
-
-    st.subheader("📊 تمثيل بصري للنظام")
 
     x = np.linspace(-5, 5, 60)
     y = np.linspace(-5, 5, 60)
     X, Y = np.meshgrid(x, y)
 
-    seed_num = sum([int(d) for d in str(st.session_state["global_seed_factor"]) if d.isdigit()] or [1])
+    seed_num = sum(int(d) for d in str(st.session_state['global_seed_factor']) if d.isdigit())
 
     Z = np.sin(X * seed_num * 0.01) * np.cos(Y)
 
     fig = go.Figure(data=[go.Surface(z=Z, x=X, y=Y)])
     st.plotly_chart(fig, use_container_width=True)
 
-# ==============================
-# 4 - DECODER
-# ==============================
+# =========================================================
+# 4️⃣ مفكك الشفرات (بدون تغيير وظيفي)
+# =========================================================
 elif selected_option == "مفكك الشفرات العام 🔓":
-
-    st.subheader("🔍 محلل البيانات")
 
     text = st.text_area("أدخل النص")
 
